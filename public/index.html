@@ -1,6 +1,79 @@
 <body>
 <head>
 	<title> Bienvenido</title>
+	<script src="js/jquery-3.3.1.min.js"></script>
+	<script src="js/geneticAlgorithm.js"></script>
+	
+	<script>
+		$(function(){
+			var tableOfCharacters = ['0','1','2','3','4','5','6','7','8','9','+','-','*','/','l','p','.'];
+			var variablesRunsSet = {
+					0:{x:1, y:3.1416},
+					1:{x:2, y:3.1416}
+				};
+			var randomize = function(){
+				var genes = "";
+				var amount = Math.floor(Math.random() * 10)+1;
+				for(var i =0; i<amount;i++){
+					var type = Math.floor(Math.random() * tableOfCharacters.length); // from 0 to latest character
+					if(tableOfCharacters[type] == 'l'){
+						genes = genes+"l("+randomize()+")";
+					}else if(tableOfCharacters[type] == 'p'){
+						genes = genes+"p("+randomize()+","+randomize()+")";
+					}else{
+						genes = genes+tableOfCharacters[type];
+					}
+				}
+				return genes;	
+			};
+			var fitness = function(gene){
+				var totalDifference = 0;
+				for(variablesRunIndex in variablesRunsSet){
+					var variablesRun = variablesRunsSet[variablesRunIndex];
+					var realY = variablesRun.y;
+					for(variableName in variablesRun){
+						value = variablesRun[variableName];
+						eval("var "+variableName+" = '"+value+"';");
+					}
+					var y = null;
+					
+					    console.log(gene + "=");
+					    var temp = eval("y="+gene);
+					    var difference = Math.pow(temp-realY,2);
+					    totalDifference+=difference;
+					
+					
+				}
+				return totalDifference;
+			}
+			var geneticAlgorith = ga({
+				validator: function(code, variablesRunsSet){
+					for(variablesRunIndex in variablesRunsSet){
+						variablesRun = variablesRunsSet[variablesRunIndex];
+						for(variableName in variablesRun){
+							value = variablesRun[variableName];
+							eval("var "+variableName+" = '"+value+"';");
+						}
+						var y = null;
+						try {
+						    console.log(code + "=");
+						    var temp = eval("y="+code);
+						    console.log(temp);
+						} catch (e) {
+						    return false;
+						}
+					}
+					return true;
+				},
+				randomize: randomize,
+				generationsCount:100,
+				populationCount:20,
+				variablesRunsSet:variablesRunsSet,
+				fitness: fitness
+			});
+			geneticAlgorith.execute();
+		});
+	</script>
 </head>
 <body>
 	Hola mundo
