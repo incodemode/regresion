@@ -1,17 +1,12 @@
-l = function(value){
-	return Math.log(value);
-}
-p = function(value, pow){
-	return Math.pow(value, pow);
-}
-function ga(properties){
+
+function geneticAlgorithm(properties){
 
 	var validator = properties.validator;
-	var variablesRunsSet = properties.variablesRunsSet;
 	var generationsCount = properties.generationsCount;
 	var populationCount = properties.populationCount;
 	var randomize = properties.randomize;
-	var fitness = properties.fitness;
+	var fitnessFunction = properties.fitnessFunction;
+	var equals = properties.equals;
 	var orderByFitness = function(genes){
 		
 		
@@ -20,27 +15,41 @@ function ga(properties){
 		});
 		return genes;
 	};
-	validator("y=x",variablesRunsSet);
+	
 	this.execute = function(){
 		var genes = [];
-		for(var i =0; i< populationCount; i++){
-			var valid = false;
-			var gene;
-			do{
-				 gene = randomize();
-				 valid = validator(gene,variablesRunsSet);
-			}while(!valid);
+		while(genes.length<20){
+			
+			var possibleGene = randomize();
+			tryPushGene(genes, possibleGene);
 
-			genes.push({gene:gene, fitness: fitness(gene)});
 		}
 		console.log(genes);
 		for(var i = 0; i<generationsCount;i++){
+			orderByFitness(genes);
 			for(var j = Math.floor(populationCount/3);j<populationCount;j++){
 				
 			}
-			orderByFitness(genes);
 		}
 		console.log(genes);
+	}
+	function tryPushGene(genes, gene){
+		
+			
+		var valid = validator(gene);
+		if(!valid){
+			return;
+		}
+		for(var i in genes){
+			existentObject = genes[i];
+			if(equals(gene, existentObject.gene)|| existentObject.gene == gene){
+				return;
+			}
+		}
+		var fitness = fitnessFunction(gene);
+		genes.push({gene:gene, fitness: fitness});
+		
+
 	}
 	return this;
 }
