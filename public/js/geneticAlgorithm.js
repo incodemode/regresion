@@ -8,6 +8,7 @@ function geneticAlgorithm(properties){
 	var fitnessFunction = properties.fitnessFunction;
 	var equals = properties.equals;
 	var crossover = properties.crossover;
+	
 	var orderByFitness = function(genes){
 		
 		
@@ -19,32 +20,52 @@ function geneticAlgorithm(properties){
 	
 	this.execute = function(){
 		var genes = [];
-		while(genes.length<populationCount){
-			
-			var possibleGene = randomize();
-			tryPushGene(genes, possibleGene);
+		var occupied = false;
+		var occupiedGeneration = false;
+		var intervalGenerations;
+		var currentGeneration = 0;
+		var status = "fillingInitialSetup";
+		var oneThird;
+		var interval = setInterval(function(){
+			switch(status){
+				case "fillingInitialSetup":
+					var possibleGene = randomize();
+					tryPushGene(genes, possibleGene);	
+					if(genes.length>=populationCount){
+						status = "fillingGenerations";
+					}
+					break;
+				case "fillingGenerations":
+					if(currentGeneration>generationsCount){
+						console.log("genes: ", genes);
+						console.log("currentGeneration: ", currentGeneration);
+						clearInterval(interval);
+					}else if(genes.length >= populationCount){
+						orderByFitness(genes);
+						console.log("genes: ",JSON.parse(JSON.stringify(genes)));
+						console.log("currentGeneration: ", currentGeneration);
+						currentGeneration++;
+						if(genes[0].fitness ==0){
+							clearInterval(interval);
+							
+							return;
+						}
+						oneThird = Math.floor(populationCount/2);
+						genes.splice(oneThird,populationCount-oneThird);
+						console.log("genes: ",JSON.parse(JSON.stringify(genes)));
+						console.log("currentGeneration: ", currentGeneration);
+					}else{
+						var gene1 = genes[Math.floor(Math.random()*oneThird)];
+						var gene2 = genes[Math.floor(Math.random()*oneThird)];
+						var gene3 = crossover(gene1.gene, gene2.gene);
+						tryPushGene(genes, gene3);
+					}
 
-		}
-		orderByFitness(genes);
-		console.log(genes);
-		for(var i = 0; i<generationsCount;i++){
-			var oneThird = Math.floor(populationCount/3);
-			genes.splice(oneThird,populationCount-oneThird);
-			
-			//crossover of genes
-			while(genes.length<populationCount){
-				var gene1 = genes[Math.floor(Math.random()*oneThird)];
-				var gene2 = genes[Math.floor(Math.random()*oneThird)];
+			}
+		},100);
 
-				var gene3 = crossover(gene1.gene, gene2.gene);
-				tryPushGene(genes, gene3);
-			}
-			orderByFitness(genes);
-			console.log(genes);
-			if(genes[0].fitness == 0){
-				return;
-			}
-		}
+				
+	
 	}
 
 	function tryPushGene(genes, gene){

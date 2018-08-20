@@ -7,9 +7,9 @@ var regresion = function(properties){
 	var randomize = function(limit = 10){
 		var possibleNodes;
 		if(limit <= 0){
-			possibleNodes = ["number", "pi", "e", "var"];
+			possibleNodes = ["int","number", "pi", "e", "var"];
 		}else{
-			possibleNodes = ["+","-","*","/","pow","log", "par", "sin", "cos", "tan", "asin", "acos", "atan", "number", "pi", "e", "var"];
+			possibleNodes = ["+","-","*","/","^","log", "par", "sin", "cos", "tan", "asin", "acos", "atan", "int", "number", "pi", "e", "var"];
 		}
 		var type = Math.floor(Math.random() * possibleNodes.length); // from 0 to latest character
 		var genes = "";
@@ -20,6 +20,7 @@ var regresion = function(properties){
 			case "-":
 			case "*":
 			case "/":
+			case "^":
 				var op1 = randomize(limit -1);
 				var op2 = randomize(limit -1);
 				genes = op1+operator+op2;
@@ -47,10 +48,14 @@ var regresion = function(properties){
 
 				var genes = math.random(10);
 				break;
+			case "int":
+
+				var genes = math.floor(math.random(10));
+				break;
 			case "pi":
 			case "e":
 
-				var genes = operator;
+				var genes = math.eval(operator);
 				break;
 			case "var":
 				var variableIndex = Math.floor(Math.random() * variableNames.length); // from 0 to latest character
@@ -67,7 +72,6 @@ var regresion = function(properties){
 		for(variablesRunIndex in variablesRunsSet){
 			var variablesRun = variablesRunsSet[variablesRunIndex];
 			var realY = variablesRun.y;
-		    console.log(gene + "=");
 		    var temp = math.parse(gene).eval(variablesRun);
 		    var difference = Math.pow(temp-realY,2);
 		    totalDifference+=difference;	
@@ -75,14 +79,18 @@ var regresion = function(properties){
 		return totalDifference;
 	}
 	var validator = function(code){
+
+		if(code == null || code.length>50){
+			return false;
+		}
 			for(variablesRunIndex in variablesRunsSet){
 				variablesRun = variablesRunsSet[variablesRunIndex];
 				var y = null;
 				try {
-				    console.log(code + "=");
+				    
 				    var temp = math.parse(code).eval(variablesRun);
 				    
-				    console.log(temp);
+				    
 				} catch (e) {
 				    return false;
 				}
@@ -96,7 +104,7 @@ var regresion = function(properties){
 				return false;
 			}
 			var fitnessValue = fitnessFunction(code);
-			if(isNaN(fitnessValue)){
+			if(isNaN(fitnessValue)||fitnessValue === null){
 				return false;
 			}
 			
@@ -108,7 +116,8 @@ var regresion = function(properties){
 	};
 	var crossover = function(gene1, gene2){
 		try{
-			console.log(gene1, gene2);
+			
+
 			var gene1Nodes = [];
 			var gene2Nodes = [];
 			var crossed = gene1;
@@ -121,7 +130,7 @@ var regresion = function(properties){
 			randomPrune1 = Math.floor(Math.random()*gene1Nodes.length);
 			randomPrune2 = Math.floor(Math.random()*gene2Nodes.length);
 			crossedObject = math.parse(crossed);
-			console.log("initialCrossedObject:",crossedObject.toString());
+			
 			var pruneOneParent = null;
 			var pruneOnePath = null;
 			var pruneOneCount = 0;
@@ -132,7 +141,7 @@ var regresion = function(properties){
 				}
 				pruneOneCount++;
 			});
-			console.log("initialCrossedObject:",crossedObject.toString());
+			
 			var pruneTwoCount = 0;
 			pruneTwoNode = null;
 			math.parse(gene2).traverse(function (node, path, parent){
@@ -141,20 +150,23 @@ var regresion = function(properties){
 				}
 				pruneTwoCount++;
 			});
+			if(math.random()<0.1){
+				var mutationString = randomize();
+				pruneTwoNode = math.parse(mutationString);
+			}
 			if(pruneOneParent!== null){
-				eval('pruneOneParent.' + pruneOnePath + '=pruneTwoNode');
+				eval('pruneOneParent.' + pruneOnePath + '=pruneTwoNode;');
 			}else{
 				crossedObject = pruneTwoNode;
+
 			}
-			console.log("crossedObject: ",crossedObject);
+			
 		
 			crossedString = crossedObject.toString();
 		}catch(err){
 			return null;
 		}
-		if(math.random()<0.1){
-			crossedString = randomize();
-		}
+		
 		return crossedString;
 	}
 	this.execute = function(){
@@ -168,8 +180,8 @@ var regresion = function(properties){
 			validator: validator,
 			randomize: randomize,
 			equals: equals,
-			generationsCount:100,
-			populationCount:20,
+			generationsCount:10000,
+			populationCount:50,
 			fitnessFunction: fitnessFunction,
 			crossover: crossover
 		});
