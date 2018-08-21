@@ -42,14 +42,10 @@ function geneticAlgorithm(properties){
 						break;
 					case "fillingGenerations":
 						if(currentGeneration>generationsCount){
-							console.log("genes: ", genes);
-							console.log("currentGeneration: ", currentGeneration);
+							
 							clearInterval(interval);
 						}else if(genes.length >= populationCount){
-							console.log(genes.length);
-							//orderByFitness(genes);
-							console.log("genes: ",JSON.parse(JSON.stringify(genes)));
-							console.log("currentGeneration: ", currentGeneration);
+							
 
 							oneThird = Math.floor(populationCount/2);
 							genes.splice(oneThird,populationCount-oneThird);
@@ -60,8 +56,7 @@ function geneticAlgorithm(properties){
 
 								newGeneFoundCallback(genes[i]);
 							}
-							console.log("genes: ",JSON.parse(JSON.stringify(genes)));
-							console.log("currentGeneration: ", currentGeneration);
+							
 						}else{
 							var gene1 = genes[Math.floor(Math.random()*oneThird)];
 							var gene2 = genes[Math.floor(Math.random()*oneThird)];

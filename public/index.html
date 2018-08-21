@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="en">
 <head>
-	<title> Bienvenido Mau</title>
+	<title> Funciones de Regresión por Medio de Algoritmos Genéticos</title>
 	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 	<meta charset="UTF-8">
 	<script src="js/jquery-3.3.1.min.js"></script>
@@ -37,7 +37,7 @@
 				
 				var $empty = $('#emptyCard');
 				var $newCard = $empty.clone();
-				console.log($newCard);
+				
 				var cardId = 'generation_'+generationNumber;
 				var headerId ='generation_header_'+generationNumber;
 				var collapseId = 'generation_collapse_'+generationNumber;
@@ -48,7 +48,7 @@
 				$newCard.find('[data-body]').html("Vacio");
 				$empty.after($newCard);
 				$newCard.show({complete:function(){
-					console.log($(".collapse.show").not("#"+collapseId));
+					
 					
 					$("#"+collapseId).collapse('show');
 				}});
@@ -177,7 +177,7 @@
 					variablesRunsSet[i] = variableObject;
 
 				}
-				console.log(variablesRunsSet);
+				
 				var r = regresion({
 					variablesRunsSet:variablesRunsSet,
 					newGenerationStartedCallback:newGenerationStartedCallback,
@@ -199,6 +199,7 @@
 <body style="background-color:#FDFDFD">
 <!--body-->
 	<div class="container">
+		<h1>Funciones de Regresión por Algoritmos Genéticos <span class="badge badge-secondary">Alpha</span></h1>
 		<form>
 		  
 		  <div class="form-group">
