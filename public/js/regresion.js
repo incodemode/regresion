@@ -1,9 +1,11 @@
 var regresion = function(properties){
 	var variablesRunsSet = properties.variablesRunsSet;
-
-	
+	var newGenerationStartedCallback = properties.newGenerationStartedCallback;
+	var newGeneFoundCallback = properties.newGeneFoundCallback;
 	var variableNames = [];
-	
+	function random_powerlaw(mini, maxi) {
+	    return Math.exp(Math.random()*(Math.log(maxi)-Math.log(mini)))*mini;
+	}
 	var randomize = function(limit = 10){
 		var possibleNodes;
 		if(limit <= 0){
@@ -46,11 +48,11 @@ var regresion = function(properties){
 				break; 
 			case "number":
 
-				var genes = math.random(10);
+				var genes = random_powerlaw(0.0000001,Number.MAX_VALUE);
 				break;
 			case "int":
 
-				var genes = math.floor(math.random(10));
+				var genes = math.floor(random_powerlaw(0.0000001,Number.MAX_VALUE));
 				break;
 			case "pi":
 			case "e":
@@ -80,7 +82,7 @@ var regresion = function(properties){
 	}
 	var validator = function(code){
 
-		if(code == null || code.length>50){
+		if(code == null || code.length>50 || code == 'NaNi'){
 			return false;
 		}
 			for(variablesRunIndex in variablesRunsSet){
@@ -96,15 +98,18 @@ var regresion = function(properties){
 				}
 			}
 			try{
-				code = math.simplify(code).toString();
-				if(code == null || code == 'undefined'){
+				var simplifyExtraRules = math.simplify.rules.concat([
+				'tan(atan(n1)) -> n1'
+				]);
+				code = math.simplify(code, simplifyExtraRules).toString();
+				if(code == null || code == 'undefined' || code == 'Infinity'){
 					return false;
 				}
 			}catch(err){
 				return false;
 			}
 			var fitnessValue = fitnessFunction(code);
-			if(isNaN(fitnessValue)||fitnessValue === null){
+			if(isNaN(fitnessValue)||fitnessValue == null|| fitnessValue == 'NaNi' || fitnessValue == 'Infinity'){
 				return false;
 			}
 			
@@ -183,7 +188,9 @@ var regresion = function(properties){
 			generationsCount:10000,
 			populationCount:50,
 			fitnessFunction: fitnessFunction,
-			crossover: crossover
+			crossover: crossover,
+			newGenerationStartedCallback:newGenerationStartedCallback,
+			newGeneFoundCallback:newGeneFoundCallback
 		});
 		ga.execute();
 	};

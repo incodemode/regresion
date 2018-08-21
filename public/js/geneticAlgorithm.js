@@ -8,7 +8,9 @@ function geneticAlgorithm(properties){
 	var fitnessFunction = properties.fitnessFunction;
 	var equals = properties.equals;
 	var crossover = properties.crossover;
-	
+	var newGenerationStartedCallback = properties.newGenerationStartedCallback;
+	var newGeneFoundCallback = properties.newGeneFoundCallback;
+
 	var orderByFitness = function(genes){
 		
 		
@@ -18,51 +20,67 @@ function geneticAlgorithm(properties){
 		return genes;
 	};
 	
+	
 	this.execute = function(){
 		var genes = [];
 		var occupied = false;
 		var occupiedGeneration = false;
 		var intervalGenerations;
-		var currentGeneration = 0;
+		var currentGeneration = 1;
 		var status = "fillingInitialSetup";
 		var oneThird;
-		var interval = setInterval(function(){
-			switch(status){
-				case "fillingInitialSetup":
-					var possibleGene = randomize();
-					tryPushGene(genes, possibleGene);	
-					if(genes.length>=populationCount){
-						status = "fillingGenerations";
-					}
-					break;
-				case "fillingGenerations":
-					if(currentGeneration>generationsCount){
-						console.log("genes: ", genes);
-						console.log("currentGeneration: ", currentGeneration);
-						clearInterval(interval);
-					}else if(genes.length >= populationCount){
-						orderByFitness(genes);
-						console.log("genes: ",JSON.parse(JSON.stringify(genes)));
-						console.log("currentGeneration: ", currentGeneration);
-						currentGeneration++;
-						if(genes[0].fitness ==0){
-							clearInterval(interval);
-							
-							return;
+		var working = false;
+			function iterable(){
+				
+				switch(status){
+					case "fillingInitialSetup":
+						var possibleGene = randomize();
+						tryPushGene(genes, possibleGene);	
+						if(genes.length>=populationCount){
+							status = "fillingGenerations";
 						}
-						oneThird = Math.floor(populationCount/2);
-						genes.splice(oneThird,populationCount-oneThird);
-						console.log("genes: ",JSON.parse(JSON.stringify(genes)));
-						console.log("currentGeneration: ", currentGeneration);
-					}else{
-						var gene1 = genes[Math.floor(Math.random()*oneThird)];
-						var gene2 = genes[Math.floor(Math.random()*oneThird)];
-						var gene3 = crossover(gene1.gene, gene2.gene);
-						tryPushGene(genes, gene3);
-					}
+						break;
+					case "fillingGenerations":
+						if(currentGeneration>generationsCount){
+							console.log("genes: ", genes);
+							console.log("currentGeneration: ", currentGeneration);
+							clearInterval(interval);
+						}else if(genes.length >= populationCount){
+							console.log(genes.length);
+							//orderByFitness(genes);
+							console.log("genes: ",JSON.parse(JSON.stringify(genes)));
+							console.log("currentGeneration: ", currentGeneration);
 
-			}
-		},100);
+							oneThird = Math.floor(populationCount/2);
+							genes.splice(oneThird,populationCount-oneThird);
+							
+							newGenerationStartedCallback(currentGeneration+1);
+							currentGeneration++;
+							for(var i in genes){
+
+								newGeneFoundCallback(genes[i]);
+							}
+							console.log("genes: ",JSON.parse(JSON.stringify(genes)));
+							console.log("currentGeneration: ", currentGeneration);
+						}else{
+							var gene1 = genes[Math.floor(Math.random()*oneThird)];
+							var gene2 = genes[Math.floor(Math.random()*oneThird)];
+							var gene3 = crossover(gene1.gene, gene2.gene);
+							tryPushGene(genes, gene3);
+							if(genes[0].fitness ==0){
+								
+								
+								return;
+							}
+						}
+						break;
+
+				}
+				setTimeout(iterable,100);
+			
+		}
+		newGenerationStartedCallback(1);
+		setTimeout(iterable,100);
 
 				
 	
@@ -82,7 +100,24 @@ function geneticAlgorithm(properties){
 			}
 		}
 		var fitness = fitnessFunction(gene);
-		genes.push({gene:gene, fitness: fitness});
+		var inserted = false;
+		var geneObject = {number:1,gene:gene, fitness: fitness};
+		var i = 0;
+		for(i in genes){
+			if(!inserted && genes[i].fitness>=fitness){
+				geneObject.number = 1+parseInt(i);
+				genes.splice(i,0,geneObject);
+				newGeneFoundCallback(geneObject);
+				inserted = true;
+			}else if(inserted){
+				genes[i].number = 1+parseInt(i);
+			}
+		}
+		if(!inserted){
+			geneObject.number = genes.length+1;
+			genes.push(geneObject);
+			newGeneFoundCallback(geneObject);
+		}
 		
 
 	}
