@@ -71,11 +71,11 @@ function geneticAlgorithm(properties){
 						break;
 
 				}
-				setTimeout(iterable,100);
+				setTimeout(iterable,10);
 			
 		}
 		newGenerationStartedCallback(1);
-		setTimeout(iterable,100);
+		setTimeout(iterable,10);
 
 				
 	
