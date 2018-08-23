@@ -186,7 +186,7 @@ var regresion = function(properties){
 			randomize: randomize,
 			equals: equals,
 			generationsCount:10000,
-			populationCount:24,
+			populationCount:100,
 			fitnessFunction: fitnessFunction,
 			crossover: crossover,
 			newGenerationStartedCallback:newGenerationStartedCallback,
