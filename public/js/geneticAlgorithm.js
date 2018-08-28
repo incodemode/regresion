@@ -23,6 +23,7 @@ function geneticAlgorithm(properties){
 	
 	this.execute = function(){
 		var genes = [];
+		var newGenes = [];
 		var occupied = false;
 		var occupiedGeneration = false;
 		var intervalGenerations;
@@ -35,8 +36,8 @@ function geneticAlgorithm(properties){
 				switch(status){
 					case "fillingInitialSetup":
 						var possibleGene = randomize();
-						tryPushGene(genes, possibleGene);	
-						if(genes.length>=populationCount){
+						tryPushGene(newGenes, possibleGene);	
+						if(newGenes.length>=populationCount){
 							status = "fillingGenerations";
 						}
 						break;
@@ -44,25 +45,25 @@ function geneticAlgorithm(properties){
 						if(currentGeneration>generationsCount){
 							
 							clearInterval(interval);
-						}else if(genes.length >= populationCount){
+						}else if(newGenes.length >= populationCount){
 							
 
 							oneThird = Math.floor(populationCount/2);
-							genes.splice(oneThird,populationCount-oneThird);
-							
+							genes = JSON.parse(JSON.stringify(newGenes));
+							newGenes.splice(oneThird,populationCount-oneThird);
 							newGenerationStartedCallback(currentGeneration+1);
 							currentGeneration++;
-							for(var i in genes){
+							for(var i in newGenes){
 
-								newGeneFoundCallback(genes[i]);
+								newGeneFoundCallback(newGenes[i]);
 							}
 							
 						}else{
-							var gene1 = genes[Math.floor(Math.random()*oneThird)];
-							var gene2 = genes[Math.floor(Math.random()*oneThird)];
+							var gene1 = genes[Math.floor(Math.random()*genes.length)];
+							var gene2 = genes[Math.floor(Math.random()*genes.length)];
 							var gene3 = crossover(gene1.gene, gene2.gene);
-							tryPushGene(genes, gene3);
-							if(genes[0].fitness ==0){
+							tryPushGene(newGenes, gene3);
+							if(newGenes[0].fitness ==0){
 								
 								
 								return;

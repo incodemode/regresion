@@ -5,8 +5,8 @@ var regresion = function(properties){
 	var variableNames = [];
 	function random_powerlaw(mini, maxi) {
 	    return Math.exp(Math.random()*(Math.log(maxi)-Math.log(mini)))*mini;
-	}
-	var randomize = function(limit = 10){
+	};
+	randomize = function(limit = 10){
 		var possibleNodes;
 		if(limit <= 0){
 			possibleNodes = ["int","number", "pi", "e", "var"];
@@ -99,8 +99,13 @@ var regresion = function(properties){
 			}
 			try{
 				var simplifyExtraRules = math.simplify.rules.concat([
-				'tan(atan(n1)) -> n1'
+				'tan(atan(n1)) -> n1',
+				'cos(acos(n1)) -> n1',
+				'sin(asin(n1)) -> n1',
+				'1^n1 -> 1',
 				]);
+				//code = math.rationalize(math.simplify(code, simplifyExtraRules)).toString();
+				//code = math.rationalize(code).toString();
 				code = math.simplify(code, simplifyExtraRules).toString();
 				if(code == null || code == 'undefined' || code == 'Infinity'){
 					return false;
