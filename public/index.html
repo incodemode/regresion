@@ -13,6 +13,7 @@
 	<script src="js/Chart.annotation.js"></script>
 	<script src="js/geneticAlgorithm.js"></script>
 	<script src="js/regresion.js"></script>
+	<script src="js/Object.size.js"></script>
 	<link rel="stylesheet" type="text/css" href="bootstrap/css/bootstrap.min.css">
 	<script src="bootstrap/js/bootstrap.min.js"></script>
 	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.2.0/css/all.css" integrity="sha384-hWVjflwFxL6sNzntih27bfxkr27PmbbK/iSvJ+a4+0owXq79v+lsFkW54bOGbiDQ" crossorigin="anonymous">
@@ -315,124 +316,175 @@
 			});
 			var dataForX = [];
 			var configForXGraph = [];
+			var xGraph = [];
 			$(document).on("click", "#accordion [data-view]",function(evt){
+				configForXGraph = [];
+				xGraph = [];
 				$("#summaryGraphs").find("[data-summaryGraph]:not(#emptyGraph)").remove();
 				var $emptyGraph = $("#emptyGraph");
 				console.log(independentVariables);
 
-				
+				console.log("independentLabels",independentLabels);
 
 				var geneText = $(this).closest('tr').find('[data-gene]').text();
 
 				for(var i in independentVariables){
-					var $newGraph = $emptyGraph.clone();
-					$newGraph.find('[data-number]').text(independentVariables[i]);
-					$newGraph.removeAttr("id");
-					$emptyGraph.after($newGraph);
-					$newGraph.show();
-					var dataValues = [];
-					var xValues = [];
-					
-					dataForX = JSON.parse(JSON.stringify(variablesRunsSet[0]));
-					for(var j in independentLabels[i]){
+					var independentVariable = independentVariables[i];
+					function keepScope(i){
+						console.log("i: ",i);
+						var $newGraph = $emptyGraph.clone();
+						$newGraph.find('[data-number]').text(i);
+						$newGraph.removeAttr("id");
+						$emptyGraph.after($newGraph);
+						$newGraph.show();
+						var xValues = [];
 						
+						dataForX = JSON.parse(JSON.stringify(variablesRunsSet[0]));
+						console.log("dataForX",dataForX,dataForX.length);
 						
-						dataForX["x"+i] = independentLabels[i][j];
+						//console.log("dataValues", JSON.parse(JSON.stringify(dataValues)));
 						
-						
-						
-						dataValues.push({x:independentLabels[i][j],y:math.eval(geneText,dataForX)});
-					}
-
-					console.log("dataValues", dataValues);
-					var config = {
-						type: 'scatter',
-						data: {
-							//labels: independentLabels[i],
-							datasets: [{
-								data: dataValues,
-								label: 'y',
-								backgroundColor: "#0000FF",
-								borderColor: "#0000FF",
-								fill: false,
-								lineTension:0,
-								showLine:true
-							}]
-						},
-						options: {
-							annotation: {
-						        annotations: [
-						          {
-						          	drawTime: 'afterDraw',
-						            type: "line",
-						            mode: "vertical",
-						            scaleID: "x-axis-1",
-						            value: independentLabels[i][0],
-						            borderColor: "red",
-									borderWidth: 2,
-						            label: {
-						              content: "     x"+i,
-						              enabled: true,
-						              position: "top"
-						            }
-						          }
-						        ]
-						    },
-							responsive: true,
-							title: {
-								display: false,
-								text: 'Regresion con Algoritmos Genéticos'
-							},
-							tooltips: {
-								mode: 'index',
-								intersect: false,
-								callbacks:{
-									title:function(tooltipItems, data){
-										console.log(tooltipItems, data);
-										return "x"+i+" = " + tooltipItems[0].xLabel;
-									}
-								}
-							},
-							hover: {
-								mode: 'nearest',
-								intersect: true
-							},
-							scales: {
-								xAxes: [{
-									display: true,
-									scaleLabel: {
-										display: true,
-										labelString: 'x'+independentVariables[i]
-									}
-								}],
-								yAxes: [{
-									display: true,
-									scaleLabel: {
-										display: true,
-										labelString: 'y',
-										maxRotation: 0,
-          								minRotation: 0
-									},
-									type:"linear"
+						var config2 = {
+							type: 'scatter',
+							data: {
+								//labels: independentLabels[i],
+								datasets: [{
+									data: [],
+									label: 'y',
+									backgroundColor: "#0000FF",
+									borderColor: "#0000FF",
+									fill: false,
+									lineTension:0,
+									showLine:true
 								}]
+							},
+							options: {
+								
+								responsive: true,
+								title: {
+									display: false,
+									text: 'Regresion con Algoritmos Genéticos'
+								},
+								tooltips: {
+									mode: 'index',
+									intersect: false
+									
+								},
+								hover: {
+									mode: 'nearest',
+									intersect: true
+								},
+								scales: {
+									xAxes: [{
+										display: true,
+										scaleLabel: {
+											display: true,
+											labelString: 'x'+i
+										}
+									}],
+									yAxes: [{
+										display: true,
+										scaleLabel: {
+											display: true,
+											labelString: 'y',
+											maxRotation: 0,
+	          								minRotation: 0
+										},
+										type:"linear"
+									}]
+								},
+								events:["click"]
 							}
+						};
+						//if(configForXGraph[i] == undefined){
+							configForXGraph[i] = config2;
+						//}
+						//config2 = configForXGraph[i];
+						if(Object.size(dataForX) == 2){
+							config2.options.annotation = [];
+						}else{
+							config2.options.annotation = 
+								{
+							        annotations: [
+							          {
+							          	//drawTime: 'afterDraw',
+							            type: "line",
+							            mode: "vertical",
+							            scaleID: "x-axis-1",
+							            value: independentLabels[i][0],
+							            borderColor: "red",
+										borderWidth: 2,
+							            label: {
+							              content: "     x"+i,
+							              enabled: false,
+							              position: "top"
+							            }
+							          }
+							        ]
+							    }
+							    
 						}
-					};
-					if(configForXGraph[i] == undefined){
-						configForXGraph[i] = config;
+						//config2.data.datasets.data = dataValues;
+						function setValues(dataForX, i){
+							var dataValues = [];
+							dataForX = JSON.parse(JSON.stringify(dataForX));
+							for(var j in independentLabels[i]){
+								
+								
+								dataForX["x"+i] = independentLabels[i][j];
+								
+								
+								
+								dataValues.push({x:independentLabels[i][j],y:math.eval(geneText,dataForX)});
+							}
+							configForXGraph[i].data.datasets[0].data = dataValues;
+						}
+						setValues(dataForX, i);
+						$functionVisor = $("#functionVisor");
+						$functionVisor.show();
+						$functionVisor.find("[data-gene]").text("y = " + geneText);
+						var $canvas = $newGraph.find("[data-canvas]");
+						var ctx = $canvas[0].getContext('2d');
+						var chart = xGraph[i] = new Chart(ctx,config2);
+					
+						console.log("i2: ",i);
+						var indexGraph = JSON.parse(JSON.stringify(i));
+						config2.options.tooltips.callbacks = {
+							title:function(tooltipItems, data){
+
+								console.log(tooltipItems, data, indexGraph, chart);
+								if(Object.size(dataForX) != 2){
+									config2.options.annotation.annotations[0].value = independentLabels[i][tooltipItems[0].index];
+									config2.options.tooltips.enabled = false;
+									chart.update();
+									config2.options.tooltips.enabled = true;
+									dataForX['x'+i] = independentLabels[i][tooltipItems[0].index];
+									for(var k in independentVariables){
+										updatingGraph = independentVariables[k];
+										if(updatingGraph != i){
+											setValues(dataForX, updatingGraph);
+											xGraph[updatingGraph].update();
+										}
+									}
+									//setValues()
+									
+								}
+								return "x"+i+" = " + tooltipItems[0].xLabel;
+							}
+						};
+					
+						chart.update();
+						$canvas[0].onclick = function(evt){
+						    var activePoints = chart.getElementsAtEvent(evt);
+						    console.log("activePoints: ",activePoints);
+						    // use _datasetIndex and _index from each element of the activePoints array
+						};
+						console.log("chart: ", chart);
+						$('html, body').animate({
+		                    scrollTop: $functionVisor.offset().top
+		                }, 400);
 					}
-					config = configForXGraph[i];
-					config.data.datasets.data = dataValues;
-					$functionVisor = $("#functionVisor");
-					$functionVisor.show();
-					$functionVisor.find("[data-gene]").text("y = " + geneText);
-					var ctx = ($newGraph.find("[data-canvas]")[0]).getContext('2d');
-					var chart = new Chart(ctx,config);
-					chart.update();
-					console.log("chart: ", chart);
-					$('html, body').animate({
-	                    scrollTop: $functionVisor.offset().top
-	                }, 400);
+					keepScope(independentVariable);
 				}
 			});
 
