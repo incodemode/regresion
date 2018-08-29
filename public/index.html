@@ -50,11 +50,18 @@
 				},
 				{
 					name: 'y=x<sub>0</sub><sup>2</sup>+y<sub>0</sub><sup>2</sup>',
-					description: 'suma de dos variables',
+					description: 'suma de los cuadrados de dos variables',
 					variables: [
 						[1,1,2,2,3,3],
 						[1,2,2,3,3,4],
 						[2,5,8,13,18,25]
+					]
+				},
+				{
+					name: 'Precio de bitcoin de 2017',
+					description: 'El precio diario de bitcoin desde 2017 hasta junio de 2018',
+					variables: [
+						prices
 					]
 				}
 			
@@ -382,6 +389,7 @@
 						$newGraph.find('[data-number]').text(i);
 						$newGraph.removeAttr("id");
 						$emptyGraph.after($newGraph);
+						$newGraph.removeClass("col-sm-6").addClass("col-sm-12");
 						$newGraph.show();
 						var xValues = [];
 						
