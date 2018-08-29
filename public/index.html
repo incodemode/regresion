@@ -15,6 +15,7 @@
 	<script src="js/regresion.js"></script>
 	<script src="js/Object.size.js"></script>
 	<link rel="stylesheet" type="text/css" href="bootstrap/css/bootstrap.min.css">
+	<script src="js/popper.min.js"></script>
 	<script src="bootstrap/js/bootstrap.min.js"></script>
 	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.2.0/css/all.css" integrity="sha384-hWVjflwFxL6sNzntih27bfxkr27PmbbK/iSvJ+a4+0owXq79v+lsFkW54bOGbiDQ" crossorigin="anonymous">
 	
@@ -37,6 +38,51 @@
 				1:{x0:2, y:7},
 				2:{x0:3, y:12},
 			};
+			possibleVariables = [
+				{
+					name: 'y=x<sub>0</sub>+y<sub>0</sub>',
+					description: 'suma de dos variables',
+					variables: [
+						[1,1,2,2,3,3],
+						[1,2,2,3,3,4],
+						[2,3,4,5,6,7]
+					]
+				},
+				{
+					name: 'y=x<sub>0</sub><sup>2</sup>+y<sub>0</sub><sup>2</sup>',
+					description: 'suma de dos variables',
+					variables: [
+						[1,1,2,2,3,3],
+						[1,2,2,3,3,4],
+						[2,5,8,13,18,25]
+					]
+				}
+			
+			];
+			for(var i in possibleVariables){
+				var variablesObject = possibleVariables[i];
+				var $newDropdownItem = $('<a class="dropdown-item" href="#"></a>');
+				$newDropdownItem.html(variablesObject.name);
+				$newDropdownItem.attr('data-idVariables', i);
+				$newDropdownItem.attr('alt', variablesObject.description);
+
+				$("#useExampleDropdownItems").append($newDropdownItem);
+			}
+			$(document).on("click","#useExampleDropdownItems a", function(evt){
+				
+				$("#dependentVars [data-dependentVar]:not(#emptyDependentVar)").remove();
+				var variableObject = possibleVariables[parseInt($(this).attr("data-idVariables"))];
+
+				$("#Y").val(variableObject.variables[variableObject.variables.length-1].join(","));
+				for(var i = 1 ; i < variableObject.variables.length;i++){
+					$('#addDependentVariableButton').click();
+				}
+				$("#dependentVars [data-dependentVar]:not(#emptyDependentVar) [data-independentVariableInput]").each(function(index){
+					$(this).val(variableObject.variables[index].join(","));
+
+				})
+				
+			});
 			var generationCount = 0;
 			var newGenerationStartedCallback = function(generationNumber){
 				generationCount = generationNumber;
@@ -356,6 +402,15 @@
 									fill: false,
 									lineTension:0,
 									showLine:true
+								},{
+									data: [],
+									label: 'Y',
+									backgroundColor: "#00FF00",
+									borderColor: "#00FF00",
+									fill: false,
+									lineTension:0,
+									showLine:false,
+									pointRadius:5
 								}]
 							},
 							options: {
@@ -427,17 +482,32 @@
 						//config2.data.datasets.data = dataValues;
 						function setValues(dataForX, i){
 							var dataValues = [];
+							var originalDataValues = [];
 							dataForX = JSON.parse(JSON.stringify(dataForX));
+							console.log("dataForX: ", dataForX);
+							//POR CADA VALOR DE X
 							for(var j in independentLabels[i]){
 								
 								
 								dataForX["x"+i] = independentLabels[i][j];
-								
-								
-								
 								dataValues.push({x:independentLabels[i][j],y:math.eval(geneText,dataForX)});
+								for(var k in variablesRunsSet){
+									var isTheSame = true;
+									for(var l in variablesRunsSet[k]){
+										if(l != ("x"+i) && l != "y"){
+											if(variablesRunsSet[k][l] != dataForX[l]){
+												isTheSame = false;
+											}
+										}
+									}
+									if(isTheSame && independentLabels[i][j] == variablesRunsSet[k]["x"+i]){
+										originalDataValues.push({x:independentLabels[i][j],y:variablesRunsSet[k].y});
+									}
+								}
 							}
+							console.log("originalDataValues:", originalDataValues);
 							configForXGraph[i].data.datasets[0].data = dataValues;
+							configForXGraph[i].data.datasets[1].data = originalDataValues;
 						}
 						setValues(dataForX, i);
 						$functionVisor = $("#functionVisor");
@@ -510,10 +580,17 @@
 						  		<div class="col-sm-2">
 							    </div>
 						  		<button type="button" class="btn btn-info" id="addDependentVariableButton"> <span class="fas fa-pencil-alt"> </span>&nbsp;Agregar variable independiente</button>
-						  		
+							  	<div class="dropdown" id="useExampleDropdown">
+								  <button class="btn btn-secondary dropdown-toggle" type="button" id="useExample" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+								    Usar Ejemplo
+								  </button>
+								  <div class="dropdown-menu" aria-labelledby="useExample" id="useExampleDropdownItems">
+								  </div>
+								</div>
 						  		
 						  	</div>
 						  </div>
+						  
 						  <div class="form-group" id="dependentVars" style="display:none;">
 
 						  	<div class="form-row">
