@@ -389,7 +389,9 @@
 						$newGraph.find('[data-number]').text(i);
 						$newGraph.removeAttr("id");
 						$emptyGraph.after($newGraph);
-						$newGraph.removeClass("col-sm-6").addClass("col-sm-12");
+						if(independentVariables.length == 1){
+							$newGraph.removeClass("col-sm-6").addClass("col-sm-12");
+						}
 						$newGraph.show();
 						var xValues = [];
 						
