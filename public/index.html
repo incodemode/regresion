@@ -76,7 +76,7 @@
 				$("#useExampleDropdownItems").append($newDropdownItem);
 			}
 			$(document).on("click","#useExampleDropdownItems a", function(evt){
-				
+				evt.preventDefault();
 				$("#dependentVars [data-dependentVar]:not(#emptyDependentVar)").remove();
 				var variableObject = possibleVariables[parseInt($(this).attr("data-idVariables"))];
 
@@ -567,7 +567,9 @@
 					keepScope(independentVariable);
 				}
 			});
-
+			$(document).on("click","#refresh",function(evt){
+				window.location.reload();
+			});
 			
 		});
 	</script>
@@ -587,15 +589,18 @@
 						  
 						  <div class="form-group">
 							<div class="form-row">
-						  		<div class="col-sm-2">
-							    </div>
-						  		<button type="button" class="btn btn-info" id="addDependentVariableButton"> <span class="fas fa-pencil-alt"> </span>&nbsp;Agregar variable independiente</button>
-							  	<div class="dropdown" id="useExampleDropdown">
-								  <button class="btn btn-secondary dropdown-toggle" type="button" id="useExample" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-								    Usar Ejemplo
-								  </button>
-								  <div class="dropdown-menu" aria-labelledby="useExample" id="useExampleDropdownItems">
-								  </div>
+						  		
+							    	<div class="col-sm-2">
+							    	</div>
+							    <div class="btn-group">
+							  		<button type="button" class="btn btn-info" id="addDependentVariableButton"> <span class="fas fa-pencil-alt"> </span>&nbsp;Agregar variable independiente</button>
+									  <button class="btn btn-secondary dropdown-toggle" type="button" id="useExample" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+									    <span class="fas fa-book"> </span>&nbsp;Usar Ejemplo
+									  </button>
+								  	<!--div class="dropdown" id="useExampleDropdown"-->
+									  <div class="dropdown-menu" aria-labelledby="useExample" id="useExampleDropdownItems">
+									  </div>
+									<!--/div-->
 								</div>
 						  		
 						  	</div>
@@ -655,14 +660,19 @@
 						  </div>
 						  <div class="form-group">
 							<div class="form-row">
-						  		<div class="col-sm-2">
-							    </div>
-						  		<button type="button" class="btn btn-success" id="searchRegresionButton"> <span class="fas fa-calculator"> </span>&nbsp;Buscar función de regresión</button>
-						  		<div class="col-sm-1">
-							    </div>
-						  		<small class="form-text text-muted alert alert-info" id="quantityAlert">
-								      Todas las variables deben tener la misma cantidad de numeros.
-								    </small>
+							  		<div class="col-sm-2">
+								    </div>
+								<div class="btn-group col-sm-5">
+							  		<button type="button" class="btn btn-success" id="searchRegresionButton"> <span class="fas fa-calculator"> </span>&nbsp;Buscar función de regresión</button>
+							  		<button class="btn btn-danger" type="button" id="refresh">
+										    <span class="fas fa-sync-alt"> </span>&nbsp;Limpiar Formulario
+									</button>
+								</div>
+							  	<div class="col-sm-5">
+							  		<small class="form-text text-muted alert alert-info" id="quantityAlert">
+									    Todas las variables deben tener la misma cantidad de numeros.
+									</small>
+								</div>
 						  	</div>
 						  </div>
 						</form>
