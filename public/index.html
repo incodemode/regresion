@@ -390,7 +390,7 @@
 						$newGraph.removeAttr("id");
 						$emptyGraph.after($newGraph);
 						if(independentVariables.length == 1){
-							$newGraph.removeClass("col-sm-6").addClass("col-sm-12");
+							$newGraph.removeClass("col-xl-6").addClass("col-xl-12");
 						}
 						$newGraph.show();
 						var xValues = [];
@@ -576,13 +576,13 @@
 </head>
 <body style="background-color:#FAFAFA">
 <!--body-->
-	<div class="container table-responsive" style="background-color:#FEFEFE">
+	<div class="container" style="background-color:#FEFEFE">
 		<div class="row">
 			<h1 style="display: inline-block">Funciones de Regresión por Algoritmos Genéticos</h1> &nbsp;&nbsp;
 			<h4><span class="badge badge-secondary badge-pill"  style="vertical-align: top">0.4 Beta <span class="fas fa-grin-beam-sweat"> </span></span></h4>
 		</div>
 		<div class="row">
-			<div class="col-sm-12">
+			<div class="col-xl-12">
 				<div class="card">
 					<div class="card-header">
     					Ingreso de valores
@@ -593,27 +593,42 @@
 						  <div class="form-group">
 							<div class="form-row">
 						  		
-							    	<div class="col-sm-2">
+							    	<div class="col-xl-2">
 							    	</div>
 							    <div class="btn-group">
-							  		<button type="button" class="btn btn-info" id="addDependentVariableButton"> <span class="fas fa-pencil-alt"> </span>&nbsp;Agregar variable independiente</button>
+							  		<button type="button" class="btn btn-info" id="addDependentVariableButton"> <span class="fas fa-pencil-alt"> </span>&nbsp;<div class="d-none d-sm-inline">Agregar variable independiente</div>
+							  			<div class="d-inline d-sm-none">Agregar Variable</div></button>
+									  
+									 
+									  	<button class="btn btn-secondary dropdown-toggle" type="button" id="useExample" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" alt="Usar Ejemplo">
+										    <span class="fas fa-book"> </span>&nbsp;
+										    <div class="d-none d-sm-inline">Usar Ejemplo</div>
+										    <div class="d-inline d-sm-none">Ej.</div>
+									  
+								  		</button>	
+									  <div class="dropdown-menu" aria-labelledby="useExample" id="useExampleDropdownItems">
+									  </div>
+
+									
+									
+								</div>
+							    <!--div class="btn-group-vertical visible-sm">
+						  			<button type="button" class="btn btn-info" id="addDependentVariableButton"> <span class="fas fa-pencil-alt"> </span>&nbsp;Agregar variable independiente</button>
 									  <button class="btn btn-secondary dropdown-toggle" type="button" id="useExample" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 									    <span class="fas fa-book"> </span>&nbsp;Usar Ejemplo
 									  </button>
-								  	<!--div class="dropdown" id="useExampleDropdown"-->
+								  	
 									  <div class="dropdown-menu" aria-labelledby="useExample" id="useExampleDropdownItems">
 									  </div>
-									<!--/div-->
-								</div>
-						  		
+								</div-->
 						  	</div>
 						  </div>
 						  
 						  <div class="form-group" id="dependentVars" style="display:none;">
 
 						  	<div class="form-row">
-							  	<div class="input-group btn-group">
-							    	<label for="exampleFormControlTextarea1" class="col-sm-3">Variables Independientes</label>
+							  	<div class="input-group btn-group  d-inline d-sm-block">
+							    	<label for="exampleFormControlTextarea1" class="col-xl-3">Variables Independientes</label>
 							    	
 							    	<small class="form-text text-muted alert alert-info" id="independentNumbersAlert">
 								      Ingrese dos o más numeros separados por coma. 1,2.5,3,4e10
@@ -622,16 +637,19 @@
 							</div>
 
 							<div class="form-row" id="emptyDependentVar" data-dependentVar style="display:none">
-							    <div class="col-sm-2">
+							    <div class="col-xl-2">
 							    </div>
-							    <div class="col-sm-10">
+							    <div class="col-xl-10">
 							    	<div class="input-group btn-group">
 								    	<div class="input-group-prepend">
 								          <span class="input-group-text">X<sub data-variableNumberText>0</sub> = {</span>
 								      	</div>
 								          <textarea class="form-control" rows="1" aria-label="Group of values for X0 separated by coma: 1,2,3,4" onkeyup="auto_grow(this)" data-independentVariableInput></textarea>
 								    	<div class="input-group-append"><span class="input-group-text">}</span></div>
-							    		<button type="button" class="btn btn-danger deleteDependantVar"> <span class="fas fa-eraser"> </span>&nbsp;Borrar</button>
+							    		<button type="button" class="btn btn-danger deleteDependantVar">  
+							    			<div class="d-none d-sm-inline"><span class="fas fa-eraser"></span> &nbsp; Borrar</div>
+										    <div class="d-inline d-sm-none"><span class="fas fa-trash-alt"></span></div>
+										</button>
 							    	</div>
 
 								</div>
@@ -640,16 +658,16 @@
 						   <div class="form-group">
 						   	<div class="form-row">
 							  	<div class="input-group btn-group">
-							    	<label for="exampleFormControlTextarea1" class="col-sm-3">Variable Dependiente</label>
+							    	<label for="exampleFormControlTextarea1" class="col-xl-3">Variable Dependiente</label>
 							    	<small class="form-text text-muted alert alert-info" id="dependentNumbersAlert">
 								      Ingrese dos o más numeros separados por coma. 2,4.5,8,16e10
 								    </small>
 								</div>
 							</div>
 							<div class="form-row">
-							    <div class="col-sm-2">
+							    <div class=" col-xl-2">
 							    </div>
-							    <div class="col-sm-10">
+							    <div class="col-xl-10">
 							    	<div class="input-group">
 								    	<div class="input-group-prepend">
 								          <span class="input-group-text">Y = {</span>
@@ -663,15 +681,20 @@
 						  </div>
 						  <div class="form-group">
 							<div class="form-row">
-							  		<div class="col-sm-2">
-								    </div>
-								<div class="btn-group col-sm-5">
-							  		<button type="button" class="btn btn-success" id="searchRegresionButton"> <span class="fas fa-calculator"> </span>&nbsp;Buscar función de regresión</button>
+						  		<div class="col-xl-2">
+							    </div>
+								<div class="btn-group col-xl-5">
+							  		<button type="button" class="btn btn-success" id="searchRegresionButton"> <span class="fas fa-calculator"> </span>&nbsp;
+							  			<div class="d-none d-xl-inline">Buscar función de regresión</div>
+							  			<div class="d-inline d-xl-none">Ejecutar</div>
+							  		</button>
 							  		<button class="btn btn-danger" type="button" id="refresh">
-										    <span class="fas fa-sync-alt"> </span>&nbsp;Limpiar Formulario
+										<span class="fas fa-sync-alt"> </span>&nbsp;
+										<div class="d-none d-xl-inline">Limpiar Formulario</div>
+							  			<div class="d-inline d-xl-none">Limpiar</div>
 									</button>
 								</div>
-							  	<div class="col-sm-5">
+							  	<div class="col-xl-5">
 							  		<small class="form-text text-muted alert alert-info" id="quantityAlert">
 									    Todas las variables deben tener la misma cantidad de numeros.
 									</small>
@@ -684,13 +707,13 @@
 			</div>
 		</div>
 		<div class="row" id="chartHolder" style="display:none;">
-			<div class="col-sm-12">
+			<div class="col-xl-12">
 				<div class="card">
 					<div class="card-header">
     					Grafica Generacional
   					</div>
 					<div class="row" >
-						<div class="col-sm-12">
+						<div class="col-xl-12">
 							<div class="card">
 								<div class="card-body">
 									<div  style="width:100%; "><div class="chartjs-size-monitor" style="position: absolute; left: 0px; top: 0px; right: 0px; bottom: 0px; overflow: hidden; pointer-events: none; visibility: hidden; z-index: -1;"><div class="chartjs-size-monitor-expand" style="position:absolute;left:0;top:0;right:0;bottom:0;overflow:hidden;pointer-events:none;visibility:hidden;z-index:-1;"><div style="position:absolute;width:1000000px;height:1000000px;left:0;top:0"></div></div><div class="chartjs-size-monitor-shrink" style="position:absolute;left:0;top:0;right:0;bottom:0;overflow:hidden;pointer-events:none;visibility:hidden;z-index:-1;"><div style="position:absolute;width:200%;height:200%;left:0; top:0"></div></div></div>
@@ -704,7 +727,7 @@
 			</div>
 		</div>
 		<div class="row" id="functionVisor" style="display:none">
-			<div class="col-sm-12">
+			<div class="col-xl-12">
 				<div class="card">
 					<div class="card-header">
     					Visor de Función
@@ -716,7 +739,7 @@
 							
 						</p>
 						<div class="row" id="summaryGraphs"> <!-- resumen de función -->
-						  <div class="col-sm-6" id="emptyGraph" style="display:none;" data-summaryGraph>
+						  <div class="col-xl-6" id="emptyGraph" style="display:none;" data-summaryGraph>
 						    <div class="card">
 						      <div class="card-body">
 						        <h5 class="card-title">x<Sub data-number>0</Sub> vs y</h5>
