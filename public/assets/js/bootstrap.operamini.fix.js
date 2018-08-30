@@ -1,4 +1,5 @@
 $(function(){
+	alert("llega a ready");
 	if (typeof operamini != 'undefined') {  //check to see if operamini a JS var added by Opera Mini browser exists so other browsers won't error
 	    if(operamini) { //this should only work for Opera Mini
 	      $(document).on("click", '#menuButton', function(e){ //bind click which Opera Mini likes better
