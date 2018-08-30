@@ -1,12 +1,14 @@
 $(function(){
 	alert("llega a ready");
 
-
-	if (window.opera) {
-	    alert(opera.version()); 
+	function isOperaMini(){
+		return navigator.userAgent.match(/Opera Mini/i);
 	}
-	if (typeof operamini != 'undefined') {  //check to see if operamini a JS var added by Opera Mini browser exists so other browsers won't error
-	    if(operamini){ //this should only work for Opera Mini
+	/*if (window.opera) {
+	    alert(opera.version()); 
+	}*/
+	
+	    if(isOperaMini()){ //this should only work for Opera Mini
 	      alert("operamini");
 	      $(document).on("click", '#useExample', function(e){ //bind click which Opera Mini likes better
 	        e.preventDefault(); //prevent default action
@@ -19,5 +21,5 @@ $(function(){
 	      	return false;
 	      });
 	    }
-	}
+	
 });
