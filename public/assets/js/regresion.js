@@ -6,7 +6,10 @@ var regresion = function(properties){
 	function random_powerlaw(mini, maxi) {
 	    return Math.exp(Math.random()*(Math.log(maxi)-Math.log(mini)))*mini;
 	};
-	var randomize = function(limit = 10){
+	var randomize = function(limit){
+		if(limit == undefined){
+			limit = 10;
+		}
 		var possibleNodes;
 		if(limit <= 0){
 			possibleNodes = ["int","number", "pi", "e", "var"];
