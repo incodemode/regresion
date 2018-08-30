@@ -20,7 +20,7 @@ El programa está distribuido en tres capas principales:
 	* execute(): inicializa las variables para el algoritmo genético con sus funciones y lo ejecuta.
 - La parte visual y de control (public/index.html): Se encarga de la interfaz gráfica por medio de bootstrap, jQuery, graph.js y otros, también implementa los dos callbacks del algoritmo genético e inicializa el código de regresion.js.
 
-- Urls:
+Urls del proyecto:
 	* Código: https://github.com/incodemode/regresion
 	* Url del proyecto: http://regresion.incodemode.com
 
