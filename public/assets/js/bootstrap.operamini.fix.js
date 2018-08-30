@@ -24,10 +24,12 @@ $(function(){
 			});
 			$(document).bind('DOMNodeInserted', function(e) {
 			    var element = e.target;
-			    
-			        $(element).find("button,a,submit").click(function(evt){
-			        	evt.preventDefault();
-			        });
+			    alert("dom insertion");
+			        $(element).find("button,a,submit").each(function(index){
+				        this.addEventListener("click", function(evt){
+				        	evt.preventDefault();
+				        });
+				      });
 			});
 	    }
 	
