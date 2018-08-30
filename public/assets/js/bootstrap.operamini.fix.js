@@ -6,5 +6,9 @@ if (typeof operamini != 'undefined') {  //check to see if operamini a JS var add
           toggle:true
         });
       });
+      $(document).on("submit", "form", function(evt){
+      	evt.preventDefaul();
+      	return false;
+      });
     }
   }
