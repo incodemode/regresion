@@ -15,11 +15,11 @@ El programa está distribuido en tres capas principales:
 		- Simplifica la ecuación para evitar resultados repetidos.
 		- Que el fitness del gen también sea un número real.
 		Por último retorna el gen simplificado.
-	*equals(gene1, gene2): Verifica si dos funciones son iguales.
-	*crossover(gene1, gene2): cruza de manera aleatoria los dos árboles de las ecuaciones en un solo punto y tiene un 10% de probabilidad de crear una mutación en cualquiera de los dos extremos del nuevo gen.
-	*execute(): inicializa las variables para el algoritmo genético con sus funciones y lo ejecuta.
--La parte visual y de control (public/index.html): Se encarga de la interfaz gráfica por medio de bootstrap, jQuery, graph.js y otros, también implementa los dos callbacks del algoritmo genético e inicializa el código de regresion.js.
+	* equals(gene1, gene2): Verifica si dos funciones son iguales.
+	* crossover(gene1, gene2): cruza de manera aleatoria los dos árboles de las ecuaciones en un solo punto y tiene un 10% de probabilidad de crear una mutación en cualquiera de los dos extremos del nuevo gen.
+	* execute(): inicializa las variables para el algoritmo genético con sus funciones y lo ejecuta.
+- La parte visual y de control (public/index.html): Se encarga de la interfaz gráfica por medio de bootstrap, jQuery, graph.js y otros, también implementa los dos callbacks del algoritmo genético e inicializa el código de regresion.js.
 
-*Código: https://github.com/incodemode/regresion
-*Url del proyecto: http://regresion.incodemode.com
+* Código: https://github.com/incodemode/regresion
+* Url del proyecto: http://regresion.incodemode.com
 
