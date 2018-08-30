@@ -3,7 +3,7 @@ $(function(){
 
 	function isOperaMini(){
 		return navigator.userAgent.match(/Opera Mini/i);
-	}
+	};
 	/*if (window.opera) {
 	    alert(opera.version()); 
 	}*/
