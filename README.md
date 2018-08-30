@@ -8,7 +8,6 @@ El programa está distribuido en tres capas principales:
 		var op1 = randomize(limit -1);
 		var op2 = randomize(limit -1);
 		genes = op1+operator+op2;
-
 	*fitnessFunction(gene): Recibe el parámetro del gen en modo de texto y luego por medio de la librería matemática evalúa para todos los posibles puntos (X0,X1,..,Xn) que ha proveído el usuario para sacar la sumatoria del cuadrado de las diferencias, el resultado es el fitness del gen.
 	*validation(code): Por medio de la librería matemática hace lo siguiente:
 		-Verifica que todos los puntos del gen puedan ser evaluados y den como resultado números reales
