@@ -12,11 +12,8 @@ $(function(){
 	
 	    if(isOperaMini()){ //this should only work for Opera Mini
 	    	$("#operaMiniAlert").show();
-	    	window.onbeforeunload = askConfirm;
-			function askConfirm(){
-			    return "Desactive data saving.";
-			}
-			$(document).on("click", '#useExample', function(e){ //bind click which Opera Mini likes better
+	    	
+			/*$(document).on("click", '#useExample', function(e){ //bind click which Opera Mini likes better
 				e.preventDefault(); //prevent default action
 					$(this).collapse({ //manually add collapse to the targeted button
 			  		toggle:true
@@ -25,8 +22,8 @@ $(function(){
 			$(document).on("submit", "form", function(evt){
 				evt.preventDefaul();
 				return false;
-			});
-			$(document).bind('DOMNodeInserted', function(e) {
+			});*/
+			/*$(document).bind('DOMNodeInserted', function(e) {
 			    var element = e.target;
 			    alert("dom insertion");
 			        $(element).find("button,a,submit").each(function(index){
@@ -34,7 +31,7 @@ $(function(){
 				        	evt.preventDefault();
 				        });
 				      });
-			});
+			});*/
 	    }
 	
 });
