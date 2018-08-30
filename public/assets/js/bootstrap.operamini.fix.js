@@ -8,9 +8,7 @@ $(function(){
 		isOperaMini = isOperaMini || (navigator.userAgent.indexOf('Mobile Safari') > -1);
 		return isOperaMini;
 	};
-	/*if (window.opera) {
-	    alert(opera.version()); 
-	}*/
+	
 	
 	    if(isOperaMini()){ //this should only work for Opera Mini
 	      $(document).on("click", '#useExample', function(e){ //bind click which Opera Mini likes better
