@@ -2,7 +2,7 @@ $(function(){
 	alert("llega a ready");
 
 	function isOperaMini(){
-		return navigator.userAgent.match(/Opera Mini/i);
+		return (navigator.userAgent.indexOf('Opera Mini') > -1);
 	};
 	/*if (window.opera) {
 	    alert(opera.version()); 
