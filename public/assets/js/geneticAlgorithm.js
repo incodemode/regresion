@@ -31,6 +31,8 @@ function geneticAlgorithm(properties){
 		var status = "fillingInitialSetup";
 		var oneThird;
 		var working = false;
+		var lastGenerationFitnessChange = 0;
+		var lastFitness = null;
 			function iterable(){
 				
 				switch(status){
@@ -51,6 +53,13 @@ function geneticAlgorithm(properties){
 							oneThird = Math.floor(populationCount/2);
 							genes = JSON.parse(JSON.stringify(newGenes));
 							newGenes.splice(oneThird,populationCount-oneThird);
+							if(lastFitness == null || lastFitness != newGenes[0].fitness){
+								lastFitness = newGenes[0].fitness;
+								lastGenerationFitnessChange = currentGeneration;
+							}
+							if(currentGeneration - lastGenerationFitnessChange > 99){
+								return;
+							}
 							newGenerationStartedCallback(currentGeneration+1);
 							currentGeneration++;
 							for(var i in newGenes){
@@ -63,6 +72,7 @@ function geneticAlgorithm(properties){
 							var gene2 = genes[Math.floor(Math.random()*genes.length)];
 							var gene3 = crossover(gene1.gene, gene2.gene);
 							tryPushGene(newGenes, gene3);
+							
 							if(newGenes[0].fitness ==0){
 								
 								
