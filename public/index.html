@@ -226,7 +226,7 @@
 			Chart.scaleService.updateScaleDefaults('logarithmic', {
 			  ticks: {
 			    callback: function(value, index, arr) {
-			      const remain = value / (Math.pow(10, Math.floor(Chart.helpers.log10(value))));
+			      var remain = value / (Math.pow(10, Math.floor(Chart.helpers.log10(value))));
 			      if(value < 0.002){
 			      	return '';
 			      }
