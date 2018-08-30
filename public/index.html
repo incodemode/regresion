@@ -1,0 +1,806 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<title> Funciones de Regresión por Medio de Algoritmos Genéticos</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<meta charset="UTF-8">
+	<script src="assets/js/jquery-3.3.1.min.js"></script>
+	<script src="assets/js/prototype.clean.js"></script>
+	<script src="assets/js/array.unique.js"></script>
+	<script src="assets/js/math.min.js"></script>
+	<script src="assets/js/Chart.min.js"></script>
+	<script src="assets/js/Chart.lineAtIndex.js"></script>
+	<script src="assets/js/Chart.annotation.js"></script>
+	<script src="assets/js/geneticAlgorithm.js"></script>
+	<script src="assets/js/regresion.js"></script>
+	<script src="assets/js/Object.size.js"></script>
+	<link rel="stylesheet" type="text/css" href="assets/bootstrap/css/bootstrap.min.css">
+	<script src="assets/js/popper.min.js"></script>
+	<script src="assets/bootstrap/js/bootstrap.min.js"></script>
+	<link rel="stylesheet" type="text/css" href="assets/fontawesome-free-5.3.1-web/css/all.min.css">
+	
+	<script>
+		function auto_grow(element) {
+		    element.style.height = "5px";
+		    element.style.height = Math.min(element.scrollHeight,100)+"px";
+		}
+		$(function(){
+			var minFitness = null;
+			prices = [1178.53, 1183.44, 1180.7, 1184.79, 1203.73, 1217.6, 1226.94, 1255.4, 1257.13, 1244.37, 1248.22, 1248.32, 1263.54, 1284.84, 1329.19, 1320.05, 1327.04, 1347.96, 1402.08, 1443.68, 1492, 1515.63, 1512.21, 1548.29, 1555.47, 1639.32, 1706.93, 1756.8, 1807.37, 1676.99, 1759.96, 1772.42, 1697.38, 1718.2, 1802.16, 1887.33, 1968.1, 2051.73, 2055.62, 2139.03, 2291.48, 2476.3, 2357.5, 2247.48, 2106.31, 2207.58, 2289.87, 2197.23, 2330.23, 2452.18, 2517.41, 2555.65, 2552.81, 2736.59, 2914.08, 2694.22, 2825.03, 2826.7, 2942.34, 3018.54, 2682.59, 2738.93, 2494.48, 2456.92, 2528.1, 2664, 2576.17, 2641.66, 2778.83, 2712.16, 2740.79, 2738.22, 2619.12, 2594.45, 2485.36, 2593.17, 2584.56, 2561.56, 2499.98, 2460.2, 2529.78, 2581.07, 2625.07, 2629.27, 2619.11, 2521.24, 2579.93, 2525.67, 2371.96, 2332.19, 2423.16, 2364.52, 2232.65, 1993.26, 1938.94, 2244.26, 2327.9, 2294.4, 2877.39, 2694.29, 2838.81, 2762.63, 2779.04, 2591.22, 2550.18, 2697.47, 2805.18, 2720.08, 2746.33, 2873.83, 2735.59, 2723.58, 2814.36, 2883.68, 3301.76, 3255, 3431.97, 3453.16, 3377.54, 3445.28, 3679.61, 3917.65, 4111.2, 4382.74, 4204.43, 4425.3, 4316.34, 4159.46, 4206.13, 4111.22, 4054.94, 4137.67, 4191.22, 4362.47, 4408.32, 4387.46, 4394.51, 4439.66, 4648.13, 4630.73, 4764.87, 4950.72, 4643.97, 4631.69, 4319.72, 4422.12, 4626.72, 4638.1, 4317.54, 4291.88, 4191.17, 4188.84, 4148.27, 3874.26, 3226.41, 3686.9, 3678.74, 3672.57, 4067.08, 3897, 3858.09, 3612.68, 3603.31, 3777.29, 3662.12, 3927.5, 3895.51, 4208.56, 4185.29, 4164.1, 4353.05, 4394.64, 4404.1, 4320.09, 4225.92, 4322.75, 4370.24, 4437.03, 4596.96, 4772.97, 4754.7, 4830.77, 5439.13, 5640.13, 5809.69, 5697.39, 5754.22, 5595.23, 5572.2, 5699.58, 5984.09, 6013.23, 5984.96, 5895.3, 5518.85, 5733.9, 5888.14, 5767.68, 5732.82, 6140.53, 6121.8, 6447.67, 6750.17, 7030, 7161.45, 7387, 7382.45, 6958.21, 7118.8, 7458.79, 7146.78, 6570.31, 6337, 5857.32, 6517.68, 6598.77, 7279, 7843.94, 7689.91, 7776.94, 8033.94, 8238.2, 8095.59, 8230.69, 8002.64, 8201.46, 8763.78, 9326.59, 9739.05, 9908.23, 9816.35, 9916.54, 10859.56, 10895.01, 11180.89, 11616.85, 11696.06, 13708.99, 16858.02, 16057.14, 14913.4, 15036.96, 16699.68, 17178.1, 16407.2, 16531.08, 17601.94, 19343.04, 19086.64, 18960.52, 17608.35, 16454.72, 15561.05, 13857.14, 14548.71, 13975.44, 13917.03, 15745.26, 15378.28, 14428.76, 14427.87, 12629.81, 13860.14, 13412.44, 14740.76, 15134.65, 15155.23, 16937.17, 17135.84, 16178.49, 14970.36, 14439.47, 14890.72, 13287.26, 13812.71, 14188.78, 13619.03, 13585.9, 11348.02, 11141.25, 11250.65, 11514.92, 12759.64, 11522.86, 10772.15, 10839.83, 11399.52, 11137.24, 11090.06, 11407.15, 11694.47, 11158.39, 10035, 10166.51, 9052.58, 8827.63, 9224.39, 8186.65, 6914.26, 7700.39, 7581.8, 8237.24, 8689.84, 8556.61, 8070.8, 8891.21, 8516.24, 9477.84, 10016.49, 10178.71, 11092.15, 10396.63, 11159.72, 11228.24, 10456.17, 9830.43, 10149.46, 9682.38, 9586.46, 10313.08, 10564.42, 10309.64, 10907.59, 11019.52, 11438.65, 11479.73, 11432.98, 10709.53, 9906.8, 9299.28, 9237.05, 8787.16, 9532.74, 9118.27, 9144.15, 8196.9, 8256.99, 8269.33, 7862.11, 8196.02, 8594.19, 8915.9, 8895.4, 8712.89, 8918.74, 8535.89, 8449.83, 8138.34, 7790.16, 7937.2, 7086.49, 6844.32, 6926.02, 6816.74, 7049.79, 7417.89, 6789.3, 6774.75, 6620.41, 6896.28, 7022.71, 6773.94, 6830.9, 6939.55, 7916.37, 8055.11];
+
+			variablesRunsSet = [];
+			for(var index in prices){
+				variablesRunsSet.push({x0:index,y:prices[index]});
+			}
+
+			variablesRunsSet = {
+				0:{x0:1, y:4},
+				1:{x0:2, y:7},
+				2:{x0:3, y:12},
+			};
+			possibleVariables = [
+				{
+					name: 'y=x<sub>0</sub>+y<sub>0</sub>',
+					description: 'suma de dos variables',
+					variables: [
+						[1,1,2,2,3,3],
+						[1,2,2,3,3,4],
+						[2,3,4,5,6,7]
+					]
+				},
+				{
+					name: 'y=x<sub>0</sub><sup>2</sup>+y<sub>0</sub><sup>2</sup>',
+					description: 'suma de los cuadrados de dos variables',
+					variables: [
+						[1,1,2,2,3,3],
+						[1,2,2,3,3,4],
+						[2,5,8,13,18,25]
+					]
+				},
+				{
+					name: 'Precio de bitcoin de 2017',
+					description: 'El precio diario de bitcoin desde 2017 hasta junio de 2018',
+					variables: [
+						prices
+					]
+				}
+			
+			];
+			for(var i in possibleVariables){
+				var variablesObject = possibleVariables[i];
+				var $newDropdownItem = $('<a class="dropdown-item" href="#"></a>');
+				$newDropdownItem.html(variablesObject.name);
+				$newDropdownItem.attr('data-idVariables', i);
+				$newDropdownItem.attr('alt', variablesObject.description);
+
+				$("#useExampleDropdownItems").append($newDropdownItem);
+			}
+			$(document).on("click","#useExampleDropdownItems a", function(evt){
+				evt.preventDefault();
+				$("#dependentVars [data-dependentVar]:not(#emptyDependentVar)").remove();
+				var variableObject = possibleVariables[parseInt($(this).attr("data-idVariables"))];
+
+				$("#Y").val(variableObject.variables[variableObject.variables.length-1].join(","));
+				auto_grow($("#Y")[0]);
+				for(var i = 1 ; i < variableObject.variables.length;i++){
+					$('#addDependentVariableButton').click();
+				}
+				var $dependentVarsInputs = $("#dependentVars [data-dependentVar]:not(#emptyDependentVar) [data-independentVariableInput]");
+				var number = $dependentVarsInputs.length;
+				if(number == 0 ){
+					
+					$("#dependentVars").hide(400);
+				}
+				$dependentVarsInputs.each(function(index){
+					$(this).val(variableObject.variables[index].join(","));
+					var $this = $(this);
+					setTimeout(function(){auto_grow($this[0])},1000);
+				})
+				
+			});
+			var generationCount = 0;
+			var newGenerationStartedCallback = function(generationNumber){
+				generationCount = generationNumber;
+				
+				var $empty = $('#emptyCard');
+				var $newCard = $empty.clone();
+				
+				var cardId = 'generation_'+generationNumber;
+				var headerId ='generation_header_'+generationNumber;
+				var collapseId = 'generation_collapse_'+generationNumber;
+				$newCard.attr('id', cardId);
+				$newCard.find('[data-title]').attr('data-target', '#'+collapseId).attr('aria-controls', collapseId)
+					.html('<span class="fas fa-plus"> </span>&nbsp;Generación ' + generationNumber);
+				$newCard.find('[data-heading]').attr('id', headerId);
+				$newCard.find('[data-container]').attr('aria-labelledby',headerId).attr('id', collapseId);
+				$newCard.find('[data-body]').html("Vacio");
+				$empty.after($newCard);
+				$newCard.show({complete:function(){
+					
+					
+					//$("#"+collapseId).collapse('show');
+				}});
+				if(config.data.datasets[0].data.length>=2 && config.data.datasets[0].data[config.data.datasets[0].data.length-1] == config.data.datasets[0].data[config.data.datasets[0].data.length-2]){
+					config.data.labels[config.data.labels.length-1] = generationNumber;
+				}else{
+
+					config.data.labels.push(generationNumber);
+				}
+				$("#chartHolder").show();
+				window.myLine.update();
+				//config.data.datasets[0].data[config.data.datasets[0].data.length] = minFitness;
+				//$(".collapse.show").not("#"+collapseId).collapse('hide');
+
+			}
+			newGeneFoundCallback = function(geneObject){
+				if(minFitness == null || geneObject.fitness < minFitness){
+					minFitness = geneObject.fitness;
+				}
+				var $currentContainer = $("#accordion .card:nth-child(2)").find("[data-container]");
+				var $table = $currentContainer.find('table');
+				if($table.length==0){
+					$table = $('#emptyCard table').clone();
+					$currentContainer.empty().append($table);
+					$table.show(400);
+				}
+				var $row = $table.find("tbody tr").first().clone();
+				$row.find("[data-gene]").text(geneObject.gene);
+				$row.find("[data-fitness]").text(geneObject.fitness/*.toFixed(4).replace(/[.,]0*$/, "")*/);
+				
+
+				$table.find("tbody").find("tr:nth-child("+geneObject.number+")").after($row);
+				
+				var $rows = $table.find("tbody tr");
+				$rows.each(function(i){
+					$(this).find('[data-number]').html(i);
+				});
+				
+				$row.show(400);
+				
+
+					if(config.data.datasets[0].data[config.data.labels.length-1] != minFitness){
+						config.data.datasets[0].data[config.data.labels.length-1] = minFitness;
+						window.myLine.update();
+					}
+				
+			}
+
+
+			var config = {
+				type: 'line',
+				data: {
+					labels: [],
+					datasets: [{
+						label: 'Fitness',
+						backgroundColor: "#0000FF",
+						borderColor: "#0000FF",
+						data: [
+							
+						],
+						fill: false,
+						lineTension:0
+					}]
+				},
+				options: {
+					responsive: true,
+					title: {
+						display: false,
+						text: 'Regresion con Algoritmos Genéticos'
+					},
+					tooltips: {
+						mode: 'index',
+						intersect: false,
+						callbacks:{
+							title:function(tooltipItems, data){
+								
+								return "Generación " + tooltipItems[0].xLabel;
+							}
+						}
+					},
+					hover: {
+						mode: 'nearest',
+						intersect: true
+					},
+					scales: {
+						xAxes: [{
+							display: true,
+							scaleLabel: {
+								display: true,
+								labelString: 'Generación'
+							}
+						}],
+						yAxes: [{
+							display: true,
+							scaleLabel: {
+								display: true,
+								labelString: 'Fitness'
+							},
+							type:"logarithmic"
+						}]
+					}
+				}
+			};
+
+			Chart.scaleService.updateScaleDefaults('logarithmic', {
+			  ticks: {
+			    callback: function(value, index, arr) {
+			      const remain = value / (Math.pow(10, Math.floor(Chart.helpers.log10(value))));
+			      if(value < 0.002){
+			      	return '';
+			      }
+			  if (remain === 1 || remain === 2 || remain === 5 || index === 0 || index === arr.length - 1) {
+			    return (new Number(value)).toLocaleString();
+			  } else {
+			    return '';
+			  }
+			    }
+			  }
+			});
+
+			var ctx = document.getElementById('canvas').getContext('2d');
+			window.myLine = new Chart(ctx, config);
+		
+			
+			$(document).on('click','#addDependentVariableButton', function(event){
+				$emptyVar = $('#emptyDependentVar');
+				$newDependentVar = $emptyVar.clone();
+				$newDependentVar.removeAttr("id");
+				$emptyVar.after($newDependentVar);
+				var varNumber = $("#dependentVars [data-dependentVar]").length -2;
+				$newDependentVar.find("[data-variableNumberText]").text(varNumber);
+				
+				$("#dependentVars").show({complete:function(){$("#dependentVars [data-dependentVar]:not(#emptyDependentVar)").show(400);}});
+
+			});
+			$(document).on('click', "#dependentVars button.deleteDependantVar", function(){
+
+				$(this).closest("[data-dependentVar]").hide({complete:function(){
+					$(this).remove();
+					var $dependentVars = $("#dependentVars [data-dependentVar]");
+					var number = $dependentVars.length -1;
+					if(number ==0){
+						$("#dependentVars").hide(400);
+					}
+					$dependentVars.each(function(){
+
+						$(this).find("[data-variableNumberText]").text(number);
+						number--;
+					});
+				}});
+			});
+			var independentVariables = [];
+			var independentLabels = [];
+			$(document).on('click', "#searchRegresionButton", function(evt){
+				independentVariables = [];
+				var possibleErrors = [
+					"independentNumbersAlert",
+					"quantityAlert",
+					"dependentNumbersAlert"
+				];
+				for(var i in possibleErrors){
+					$("#"+possibleErrors[i]).removeClass('alert-danger').addClass('alert-info');
+				}
+
+				var independentGroups = [];
+				$independentInputs = $("#dependentVars [data-dependentVar]:not(#emptyDependentVar) [data-independentVariableInput]");
+				var totalIndependentInputs = $independentInputs.length;
+				$independentInputs.each(function(index){
+
+					independentGroups["x" + (totalIndependentInputs-index-1)] 
+						= clean2($(this).val().trim().split(','),"");
+					independentLabels[totalIndependentInputs-index-1] = independentGroups["x" + (totalIndependentInputs-index-1)];
+					/*independentGroups["x" + (totalIndependentInputs-index-1)] = 
+						$.grep(independentGroups["x" + (totalIndependentInputs-index-1)] ,function(n){ return n != "" });*/
+					independentVariables.push((totalIndependentInputs-index-1));
+				});
+				if(independentVariables.length == 0){
+					independentVariables.push(0);
+				}
+				var numberOfValues = null;
+				var errors = [];
+				for(var i in independentGroups){
+					if(numberOfValues == null){
+						numberOfValues = independentGroups[i].length;
+					}
+					if(independentGroups[i].length < 2){
+						errors.push("independentNumbersAlert");
+					}
+					if(numberOfValues !== independentGroups[i].length){
+						errors.push("quantityAlert");
+					}
+					try{
+						for(var j in independentGroups[i]){
+							independentGroups[i][j] = math.eval(independentGroups[i][j]);
+							
+						}
+						independentLabels[i] = JSON.parse(JSON.stringify(independentGroups[i]));
+					}catch(err){
+						errors.push("independentNumbersAlert");
+						
+					}
+				}
+				var y = clean2($("#Y").val().trim().split(','),"");
+				if(y.length < 2){
+					errors.push("dependentNumbersAlert");
+				}
+				if(independentGroups.length!==0 && numberOfValues !== y.length){
+					errors.push("quantityAlert");
+				}
+				try{
+					for(var j in y){
+						y[j] = math.eval(y[j]);
+					}
+				}catch(err){
+					errors.push("dependentNumbersAlert");
+					
+				}
+				for(var i in errors){
+					$("#"+errors[i]).removeClass('alert-info').addClass('alert-danger');
+				}
+				if(errors.length != 0){
+					return;
+				}
+				variablesRunsSet = {};
+				for(var i in y){
+					var variableObject = {};
+					for(var j in independentGroups){
+						variableObject[j] = independentGroups[j][i];
+					}
+					if($.isEmptyObject(variableObject)){
+						variableObject['x0'] = parseInt(i);
+						if(independentLabels.length ==0){
+							independentLabels[0] = [];
+						}
+						independentLabels[0].push(parseInt(i));
+					}
+					variableObject['y'] = y[i];
+					variablesRunsSet[i] = variableObject;
+
+				}
+				
+				for(var i in independentLabels){
+					independentLabels[i] = unique(independentLabels[i]);
+				}
+				
+				var r = regresion({
+					variablesRunsSet:variablesRunsSet,
+					newGenerationStartedCallback:newGenerationStartedCallback,
+					newGeneFoundCallback:newGeneFoundCallback
+				});
+				r.execute();
+				$('html, body').animate({
+                    scrollTop: $("#accordion").offset().top
+                }, 400);
+				$("#searchRegresionButton").attr("disabled", "disabled");
+				
+			});
+			var dataForX = [];
+			var configForXGraph = [];
+			var xGraph = [];
+			$(document).on("click", "#accordion [data-view]",function(evt){
+				configForXGraph = [];
+				xGraph = [];
+				$("#summaryGraphs").find("[data-summaryGraph]:not(#emptyGraph)").remove();
+				var $emptyGraph = $("#emptyGraph");
+				
+
+				var geneText = $(this).closest('tr').find('[data-gene]').text();
+
+				for(var i in independentVariables){
+					var independentVariable = independentVariables[i];
+					function keepScope(i){
+						
+						var $newGraph = $emptyGraph.clone();
+						$newGraph.find('[data-number]').text(i);
+						$newGraph.removeAttr("id");
+						$emptyGraph.after($newGraph);
+						if(independentVariables.length == 1){
+							$newGraph.removeClass("col-xl-6").addClass("col-xl-12");
+						}
+						$newGraph.show();
+						var xValues = [];
+						
+						dataForX = JSON.parse(JSON.stringify(variablesRunsSet[0]));
+						
+						
+						
+						
+						var config2 = {
+							type: 'scatter',
+							data: {
+								//labels: independentLabels[i],
+								datasets: [{
+									data: [],
+									label: 'y',
+									backgroundColor: "#0000FF",
+									borderColor: "#0000FF",
+									fill: false,
+									lineTension:0,
+									showLine:true
+								},{
+									data: [],
+									label: 'Y',
+									backgroundColor: "#00FF00",
+									borderColor: "#00FF00",
+									fill: false,
+									lineTension:0,
+									showLine:false,
+									pointRadius:5
+								}]
+							},
+							options: {
+								
+								responsive: true,
+								title: {
+									display: false,
+									text: 'Regresion con Algoritmos Genéticos'
+								},
+								tooltips: {
+									mode: 'index',
+									intersect: false
+									
+								},
+								hover: {
+									mode: 'nearest',
+									intersect: true
+								},
+								scales: {
+									xAxes: [{
+										display: true,
+										scaleLabel: {
+											display: true,
+											labelString: 'x'+i
+										}
+									}],
+									yAxes: [{
+										display: true,
+										scaleLabel: {
+											display: true,
+											labelString: 'y',
+											maxRotation: 0,
+	          								minRotation: 0
+										},
+										type:"linear"
+									}]
+								},
+								events:["click"]
+							}
+						};
+						//if(configForXGraph[i] == undefined){
+							configForXGraph[i] = config2;
+						//}
+						//config2 = configForXGraph[i];
+						if(Object.size(dataForX) == 2){
+							config2.options.annotation = [];
+						}else{
+							config2.options.annotation = 
+								{
+							        annotations: [
+							          {
+							          	//drawTime: 'afterDraw',
+							            type: "line",
+							            mode: "vertical",
+							            scaleID: "x-axis-1",
+							            value: independentLabels[i][0],
+							            borderColor: "red",
+										borderWidth: 2,
+							            label: {
+							              content: "     x"+i,
+							              enabled: false,
+							              position: "top"
+							            }
+							          }
+							        ]
+							    }
+							    
+						}
+						//config2.data.datasets.data = dataValues;
+						function setValues(dataForX, i){
+							var dataValues = [];
+							var originalDataValues = [];
+							dataForX = JSON.parse(JSON.stringify(dataForX));
+							
+							//POR CADA VALOR DE X
+							for(var j in independentLabels[i]){
+								
+								
+								dataForX["x"+i] = independentLabels[i][j];
+								dataValues.push({x:independentLabels[i][j],y:math.eval(geneText,dataForX)});
+								for(var k in variablesRunsSet){
+									var isTheSame = true;
+									for(var l in variablesRunsSet[k]){
+										if(l != ("x"+i) && l != "y"){
+											if(variablesRunsSet[k][l] != dataForX[l]){
+												isTheSame = false;
+											}
+										}
+									}
+									if(isTheSame && independentLabels[i][j] == variablesRunsSet[k]["x"+i]){
+										originalDataValues.push({x:independentLabels[i][j],y:variablesRunsSet[k].y});
+									}
+								}
+							}
+							
+							configForXGraph[i].data.datasets[0].data = dataValues;
+							configForXGraph[i].data.datasets[1].data = originalDataValues;
+						}
+						setValues(dataForX, i);
+						$functionVisor = $("#functionVisor");
+						$functionVisor.show();
+						$functionVisor.find("[data-gene]").text("y = " + geneText);
+						var $canvas = $newGraph.find("[data-canvas]");
+						var ctx = $canvas[0].getContext('2d');
+						var chart = xGraph[i] = new Chart(ctx,config2);
+					
+						
+						var indexGraph = JSON.parse(JSON.stringify(i));
+						config2.options.tooltips.callbacks = {
+							title:function(tooltipItems, data){
+
+								
+								if(Object.size(dataForX) != 2){
+									config2.options.annotation.annotations[0].value = independentLabels[i][tooltipItems[0].index];
+									config2.options.tooltips.enabled = false;
+									chart.update();
+									config2.options.tooltips.enabled = true;
+									dataForX['x'+i] = independentLabels[i][tooltipItems[0].index];
+									for(var k in independentVariables){
+										updatingGraph = independentVariables[k];
+										if(updatingGraph != i){
+											setValues(dataForX, updatingGraph);
+											xGraph[updatingGraph].update();
+										}
+									}
+									//setValues()
+									
+								}
+								return "x"+i+" = " + tooltipItems[0].xLabel;
+							}
+						};
+					
+						chart.update();
+						$canvas[0].onclick = function(evt){
+						    var activePoints = chart.getElementsAtEvent(evt);
+						    
+						    // use _datasetIndex and _index from each element of the activePoints array
+						};
+						
+						$('html, body').animate({
+		                    scrollTop: $functionVisor.offset().top
+		                }, 400);
+					}
+					keepScope(independentVariable);
+				}
+			});
+			$(document).on("click","#refresh",function(evt){
+				window.location.reload();
+			});
+			
+		});
+	</script>
+</head>
+<body style="background-color:#FAFAFA">
+<!--body-->
+	<div class="container" style="background-color:#FEFEFE">
+		<div class="row">
+			<div class="col-12">
+				
+				<p>
+					<h1 style="display: inline-block">Funciones de Regresión por Algoritmos Genéticos</h1> &nbsp;&nbsp;
+					<h4><span class="badge badge-secondary badge-pill"  style="vertical-align: top">0.4 Beta <span class="fas fa-grin-beam-sweat"> </span></span></h4>
+				</p>
+
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-xl-12">
+				<div class="card">
+					<div class="card-header">
+    					Ingreso de valores
+  					</div>
+  					<div class="card-body">
+						<form>
+						  
+						  <div class="form-group">
+							<div class="form-row">
+						  		
+							    	<div class="col-xl-2">
+							    	</div>
+							    <div class="btn-group">
+							  		<button type="button" class="btn btn-info" id="addDependentVariableButton"> <span class="fas fa-pencil-alt"> </span>&nbsp;<div class="d-none d-sm-inline">Agregar Variable Independiente X<sub>n</sub></div>
+							  			<div class="d-inline d-sm-none">Agregar X<sub>n</sub></div></button>
+									  
+									 
+									  	<button class="btn btn-secondary dropdown-toggle" type="button" id="useExample" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" alt="Usar Ejemplo">
+										    <span class="fas fa-book"> </span>&nbsp;
+										    <div class="d-none d-sm-inline">Usar Ejemplo</div>
+										    <div class="d-inline d-sm-none">Ej.</div>
+									  
+								  		</button>	
+									  <div class="dropdown-menu" aria-labelledby="useExample" id="useExampleDropdownItems">
+									  </div>
+
+									
+									
+								</div>
+							    <!--div class="btn-group-vertical visible-sm">
+						  			<button type="button" class="btn btn-info" id="addDependentVariableButton"> <span class="fas fa-pencil-alt"> </span>&nbsp;Agregar variable independiente</button>
+									  <button class="btn btn-secondary dropdown-toggle" type="button" id="useExample" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+									    <span class="fas fa-book"> </span>&nbsp;Usar Ejemplo
+									  </button>
+								  	
+									  <div class="dropdown-menu" aria-labelledby="useExample" id="useExampleDropdownItems">
+									  </div>
+								</div-->
+						  	</div>
+						  </div>
+						  
+						  <div class="form-group" id="dependentVars" style="display:none;">
+
+						  	<div class="form-row">
+							  	<div class="input-group btn-group  d-inline d-sm-block">
+							    	<label for="exampleFormControlTextarea1" class="col-xl-3">Variables Independientes</label>
+							    	
+							    	<small class="form-text text-muted alert alert-info" id="independentNumbersAlert">
+								      Ingrese dos o más numeros separados por coma. 1,2.5,3,4e10
+								    </small>
+								</div>
+							</div>
+
+							<div class="form-row" id="emptyDependentVar" data-dependentVar style="display:none">
+							    <div class="col-xl-2">
+							    </div>
+							    <div class="col-xl-10">
+							    	<div class="input-group btn-group">
+								    	<div class="input-group-prepend">
+								          <span class="input-group-text">X<sub data-variableNumberText>0</sub> = {</span>
+								      	</div>
+								          <textarea class="form-control" rows="1" aria-label="Group of values for X0 separated by coma: 1,2,3,4" onkeyup="auto_grow(this)" data-independentVariableInput></textarea>
+								    	<div class="input-group-append"><span class="input-group-text">}</span></div>
+							    		<button type="button" class="btn btn-danger deleteDependantVar">  
+							    			<div class="d-none d-sm-inline"><span class="fas fa-eraser"></span> &nbsp; Borrar</div>
+										    <div class="d-inline d-sm-none"><span class="fas fa-trash-alt"></span></div>
+										</button>
+							    	</div>
+
+								</div>
+							</div>
+						  </div>
+						   <div class="form-group">
+						   	<div class="form-row">
+							  	<div class="input-group btn-group">
+							    	<label for="exampleFormControlTextarea1" class="col-xl-3">Variable Dependiente</label>
+							    	<small class="form-text text-muted alert alert-info" id="dependentNumbersAlert">
+								      Ingrese dos o más numeros separados por coma. 2,4.5,8,16e10
+								    </small>
+								</div>
+							</div>
+							<div class="form-row">
+							    <div class=" col-xl-2">
+							    </div>
+							    <div class="col-xl-10">
+							    	<div class="input-group">
+								    	<div class="input-group-prepend">
+								          <span class="input-group-text">Y = {</span>
+								      	</div>
+								          <textarea class="form-control" id="Y" rows="1" onkeyup="auto_grow(this)"></textarea>
+								    	<div class="input-group-append"><span class="input-group-text">}</span></div>
+							    	</div>
+
+								</div>
+							</div>
+						  </div>
+						  <div class="form-group">
+							<div class="form-row">
+						  		<div class="col-xl-2">
+							    </div>
+								<div class="btn-group col-xl-5">
+							  		<button type="button" class="btn btn-success" id="searchRegresionButton"> <span class="fas fa-calculator"> </span>&nbsp;
+							  			<div class="d-none d-xl-inline">Buscar Función de Regresión</div>
+							  			<div class="d-inline d-xl-none">Ejecutar</div>
+							  		</button>
+							  		<button class="btn btn-danger" type="button" id="refresh">
+										<span class="fas fa-sync-alt"> </span>&nbsp;
+										<div class="d-none d-xl-inline">Limpiar Formulario</div>
+							  			<div class="d-inline d-xl-none">Limpiar</div>
+									</button>
+								</div>
+							  	<div class="col-xl-5">
+							  		<small class="form-text text-muted alert alert-info" id="quantityAlert">
+									    Todas las variables deben tener la misma cantidad de numeros.
+									</small>
+								</div>
+						  	</div>
+						  </div>
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="row" id="chartHolder" style="display:none;">
+			<div class="col-xl-12">
+				<div class="card">
+					<div class="card-header">
+    					Gráfica Generacional
+  					</div>
+					<div class="row" >
+						<div class="col-xl-12">
+							<div class="card">
+								<div class="card-body">
+									<div  style="width:100%; "><div class="chartjs-size-monitor" style="position: absolute; left: 0px; top: 0px; right: 0px; bottom: 0px; overflow: hidden; pointer-events: none; visibility: hidden; z-index: -1;"><div class="chartjs-size-monitor-expand" style="position:absolute;left:0;top:0;right:0;bottom:0;overflow:hidden;pointer-events:none;visibility:hidden;z-index:-1;"><div style="position:absolute;width:1000000px;height:1000000px;left:0;top:0"></div></div><div class="chartjs-size-monitor-shrink" style="position:absolute;left:0;top:0;right:0;bottom:0;overflow:hidden;pointer-events:none;visibility:hidden;z-index:-1;"><div style="position:absolute;width:200%;height:200%;left:0; top:0"></div></div></div>
+									<canvas id="canvas" width="1408" height="704" class="chartjs-render-monitor" style="display: block; height: 541px; width: 1082px;"></canvas>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="row" id="functionVisor" style="display:none">
+			<div class="col-xl-12">
+				<div class="card">
+					<div class="card-header">
+    					Visor de Función
+  					</div>
+  
+					<div class="card-body">
+    					<h5 class="card-title" data-gene>Función</h5>
+						<p>
+							
+						</p>
+						<div class="row" id="summaryGraphs"> <!-- resumen de función -->
+						  <div class="col-xl-6" id="emptyGraph" style="display:none;" data-summaryGraph>
+						    <div class="card">
+						      <div class="card-body">
+						        <h5 class="card-title">x<Sub data-number>0</Sub> vs y</h5>
+						        <canvas data-canvas width="1408" height="704" class="chartjs-render-monitor" style="display: block; height: 541px; width: 1082px;"></canvas>
+						        
+						      </div>
+						    </div>
+						  </div>
+						</div> <!--/ resumen de función -->
+					</div>
+				</div>
+			</div>
+		</div>
+		<div id="accordion">
+		  <div class="card" id="emptyCard" style="display:none;">
+		    <div class="card-header" id="headingOne" data-heading>
+		      <h5 class="mb-0">
+		        <button class="btn btn-link btn-sm collapsed" data-toggle="collapse" data-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne" data-title>
+		          Collapsible Group Item #1
+		        </button>
+		      </h5>
+		    </div>
+
+		    <div id="collapseOne" class="collapse" aria-labelledby="headingOne" data-parent="#accordion" data-container>
+		      <div class="card-body table-responsive" data-body>
+		        <table class="table table-striped table-sm" style="display:none">
+				  <thead>
+				    <tr>
+				      <th scope="col" class="d-none d-xl-table-cell">#</th>
+				      <th scope="col">Ecuación</th>
+				      <th scope="col" class="d-none d-xl-table-cell">Fitness</th>
+				      <th scope="col">Ver </th>
+				    </tr>
+				  </thead>
+				  <tbody>
+				    <tr style="display:none">
+				      <th class="d-none d-xl-table-cell" data-number scope="row">1</th>
+				      <td data-gene style="word-wrap: break-word;">[equation]</td>
+				      <td class="d-none d-xl-table-cell" data-fitness>[fitness]</td>
+				      <td><button type="button" class="btn btn-small" data-view> <span class="fas fa-eye"> </span> </button></td>
+				    </tr>
+				  </tbody>
+				</table>
+		      </div>
+		    </div>
+		  </div>
+		  
+		  
+		</div>
+		
+	</div>
+</body>
+</html>
