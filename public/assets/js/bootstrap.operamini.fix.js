@@ -12,16 +12,23 @@ $(function(){
 	
 	    if(isOperaMini()){ //this should only work for Opera Mini
 	    	$("#operaMiniAlert").show();
-	      $(document).on("click", '#useExample', function(e){ //bind click which Opera Mini likes better
-	        e.preventDefault(); //prevent default action
-	        $(this).collapse({ //manually add collapse to the targeted button
-	          toggle:true
-	        });
-	      });
-	      $(document).on("submit", "form", function(evt){
-	      	evt.preventDefaul();
-	      	return false;
-	      });
+			$(document).on("click", '#useExample', function(e){ //bind click which Opera Mini likes better
+				e.preventDefault(); //prevent default action
+					$(this).collapse({ //manually add collapse to the targeted button
+			  		toggle:true
+				});
+			});
+			$(document).on("submit", "form", function(evt){
+				evt.preventDefaul();
+				return false;
+			});
+			$(document).bind('DOMNodeInserted', function(e) {
+			    var element = e.target;
+			    
+			        $(element).find("button,a,submit").click(function(evt){
+			        	evt.preventDefault();
+			        });
+			});
 	    }
 	
 });
