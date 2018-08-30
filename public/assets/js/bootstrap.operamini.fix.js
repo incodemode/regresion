@@ -11,6 +11,7 @@ $(function(){
 	
 	
 	    if(isOperaMini()){ //this should only work for Opera Mini
+	    	$("#operaMiniAlert").show();
 	      $(document).on("click", '#useExample', function(e){ //bind click which Opera Mini likes better
 	        e.preventDefault(); //prevent default action
 	        $(this).collapse({ //manually add collapse to the targeted button
