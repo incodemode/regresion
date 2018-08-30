@@ -1,8 +1,8 @@
 $(function(){
-	alert("llega a ready");
+
 
 	function isOperaMini(){
-		alert(navigator.userAgent);
+
 		var isOperaMini = false;
 		isOperaMini = isOperaMini || (navigator.userAgent.indexOf('Opera Mini') > -1);
 		isOperaMini = isOperaMini || (navigator.userAgent.indexOf('Mobile Safari') > -1);
@@ -13,7 +13,6 @@ $(function(){
 	}*/
 	
 	    if(isOperaMini()){ //this should only work for Opera Mini
-	      alert("operamini");
 	      $(document).on("click", '#useExample', function(e){ //bind click which Opera Mini likes better
 	        e.preventDefault(); //prevent default action
 	        $(this).collapse({ //manually add collapse to the targeted button
