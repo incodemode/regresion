@@ -11,9 +11,9 @@ El programa está distribuido en tres capas principales:
 
 	* fitnessFunction(gene): Recibe el parámetro del gen en modo de texto y luego por medio de la librería matemática evalúa para todos los posibles puntos (X0,X1,..,Xn) que ha proveído el usuario para sacar la sumatoria del cuadrado de las diferencias, el resultado es el fitness del gen.
 	* validation(code): Por medio de la librería matemática hace lo siguiente:
-		-Verifica que todos los puntos del gen puedan ser evaluados y den como resultado números reales
-		-Simplifica la ecuación para evitar resultados repetidos.
-		-Que el fitness del gen también sea un número real.
+		- Verifica que todos los puntos del gen puedan ser evaluados y den como resultado números reales
+		- Simplifica la ecuación para evitar resultados repetidos.
+		- Que el fitness del gen también sea un número real.
 		Por último retorna el gen simplificado.
 	*equals(gene1, gene2): Verifica si dos funciones son iguales.
 	*crossover(gene1, gene2): cruza de manera aleatoria los dos árboles de las ecuaciones en un solo punto y tiene un 10% de probabilidad de crear una mutación en cualquiera de los dos extremos del nuevo gen.
