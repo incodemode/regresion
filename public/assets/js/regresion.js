@@ -2,6 +2,8 @@ var regresion = function(properties){
 	var variablesRunsSet = properties.variablesRunsSet;
 	var newGenerationStartedCallback = properties.newGenerationStartedCallback;
 	var newGeneFoundCallback = properties.newGeneFoundCallback;
+	var finishCriteriaFoundCallback = properties.finishCriteriaFoundCallback;
+	
 	var variableNames = [];
 	function random_powerlaw(mini, maxi) {
 	    return Math.exp(Math.random()*(Math.log(maxi)-Math.log(mini)))*mini;
@@ -198,7 +200,8 @@ var regresion = function(properties){
 			fitnessFunction: fitnessFunction,
 			crossover: crossover,
 			newGenerationStartedCallback:newGenerationStartedCallback,
-			newGeneFoundCallback:newGeneFoundCallback
+			newGeneFoundCallback:newGeneFoundCallback,
+			finishCriteriaFoundCallback:finishCriteriaFoundCallback
 		});
 		ga.execute();
 	};

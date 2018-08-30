@@ -10,6 +10,8 @@ function geneticAlgorithm(properties){
 	var crossover = properties.crossover;
 	var newGenerationStartedCallback = properties.newGenerationStartedCallback;
 	var newGeneFoundCallback = properties.newGeneFoundCallback;
+	var finishCriteriaFoundCallback = properties.finishCriteriaFoundCallback;
+	
 
 	var orderByFitness = function(genes){
 		
@@ -45,10 +47,10 @@ function geneticAlgorithm(properties){
 						break;
 					case "fillingGenerations":
 						if(currentGeneration>generationsCount){
-							
-							clearInterval(interval);
+							//finishCriteriaFoundCallback(newGenes[0], currentGeneration);
+							//return;
+							//clearInterval(interval);
 						}else if(newGenes.length >= populationCount){
-							
 
 							oneThird = Math.floor(populationCount/2);
 							genes = JSON.parse(JSON.stringify(newGenes));
@@ -58,6 +60,7 @@ function geneticAlgorithm(properties){
 								lastGenerationFitnessChange = currentGeneration;
 							}
 							if(currentGeneration - lastGenerationFitnessChange > 99){
+								finishCriteriaFoundCallback(newGenes[0], currentGeneration);
 								return;
 							}
 							newGenerationStartedCallback(currentGeneration+1);
@@ -74,8 +77,7 @@ function geneticAlgorithm(properties){
 							tryPushGene(newGenes, gene3);
 							
 							if(newGenes[0].fitness ==0){
-								
-								
+								finishCriteriaFoundCallback(newGenes[0], currentGeneration);
 								return;
 							}
 						}

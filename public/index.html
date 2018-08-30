@@ -329,7 +329,8 @@
 				var r = regresion({
 					variablesRunsSet:variablesRunsSet,
 					newGenerationStartedCallback:newGenerationStartedCallback,
-					newGeneFoundCallback:newGeneFoundCallback
+					newGeneFoundCallback:newGeneFoundCallback,
+					finishCriteriaFoundCallback:function(){$("#accordion [data-view]:nth(2)").click();}
 				});
 				r.execute();
 				$('html, body').animate({

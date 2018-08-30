@@ -11,7 +11,7 @@
 			name: 'y=x<sub>0</sub><sup>2</sup>',
 			description: 'Variable al cuadrado',
 			variables: [
-				[0,1,4,9,25,36]
+				[0,1,4,9,16,25,36]
 			]
 		},
 		{
@@ -41,3 +41,20 @@
 		}
 	
 	];
+	function transformToRunsSet(variables){
+		runsSet = {};
+		for(var i = 0; i < variables[0].length;i++){
+			variableRunSet = {};
+			for(var j = 0; j<variables.length-1;j++){
+				variableRunSet['x'+j] = variables[j][i];
+			}
+			if(variables.length == 1){
+
+				variableRunSet['x0'] = i;
+					
+			}
+			variableRunSet.y = variables[variables.length-1][i];
+			runsSet[i] = variableRunSet;
+		}
+		return runsSet;
+	}
