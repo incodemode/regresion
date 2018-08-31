@@ -5,7 +5,7 @@ $(function(){
 
 		var isOperaMini = false;
 		isOperaMini = isOperaMini || (navigator.userAgent.indexOf('Opera Mini') > -1);
-		isOperaMini = isOperaMini || (navigator.userAgent.indexOf('Mobile Safari') > -1);
+		//isOperaMini = isOperaMini || (navigator.userAgent.indexOf('Opera') > -1);
 		return isOperaMini;
 	};
 	
