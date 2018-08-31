@@ -498,7 +498,10 @@
 						//$functionVisor.find("[data-gene]").text("y = " + geneText);
 						$functionVisor.find("[data-gene]").text("$$" + latex+ "$$");
 				      	console.log('LaTeX expression:', latex)
-				      	MathJax.Hub.Queue(["Typeset",MathJax.Hub,$functionVisor[0]]);
+				      	var queue = MathJax.Hub.Queue(["Typeset",MathJax.Hub,$functionVisor[0]]);
+				      	/*MathJax.Callback.Queue.wait(function(){
+				      		alert("hola");
+				      	});*/
 						// display and re-render the expression
 						//elem = MathJax.Hub.getAllJax('pretty')[0];
 						//MathJax.Hub.Queue(['Text', elem, latex]);
@@ -550,7 +553,12 @@
 			$(document).on("click","#refresh",function(evt){
 				window.location.reload();
 			});
-			
+			$('#accordion').on('shown.bs.collapse', function(evt) {
+				console.log(evt);
+			  	$('html, body').animate({
+	                scrollTop: $(evt.target).closest(".card").offset().top
+	            }, 400);
+			})
 		});
 	</script>
 </head>
@@ -563,11 +571,13 @@
 				<p>
 					<h1 style="display: inline-block">Funciones de Regresión por Algoritmos Genéticos</h1> &nbsp;&nbsp;
 					<h4 style="vertical-align: top; display: inline-block"><span class="badge badge-secondary badge-pill">0.6 Beta <span class="fas fa-grin-beam-sweat"> </span></span></h4>
-					<span class="alert alert-danger" style="display:none" id="operaMiniAlert">
-						Deshabilite "data savings" o use Chrome.
-					</span>
+					
 				</p>
-
+				<div>
+					<small class="form-text text-muted alert alert-danger"  id="operaMiniAlert">
+						Deshabilite "data savings" o use Chrome.
+					</small>
+				</div>
 			</div>
 		</div>
 		<div class="row">
@@ -585,7 +595,8 @@
 							    	<div class="col-xl-2">
 							    	</div>
 							    <div class="btn-group">
-							  		<button type="button" class="btn btn-info" id="addDependentVariableButton"> <span class="fas fa-pencil-alt" onclick="event.preventDefault();"> </span>&nbsp;<div class="d-none d-sm-inline">Agregar Variable Independiente X<sub>n</sub></div>
+							  		<button type="button" class="btn btn-info" id="addDependentVariableButton"> <span class="fas fa-pencil-alt" onclick="event.preventDefault();"> </span>&nbsp;
+							  			<div class="d-none d-sm-inline">Agregar Variable Independiente X<sub>n</sub></div>
 							  			<div class="d-inline d-sm-none">Agregar X<sub>n</sub></div></button>
 									  
 									 
