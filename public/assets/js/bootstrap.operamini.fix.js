@@ -11,7 +11,7 @@ $(function(){
 	
 	
 	    if(isOperaMini()){ //this should only work for Opera Mini
-			alert(navigator.userAgent);
+			//alert(navigator.userAgent);
 	    	$("#operaMiniAlert").show();
 	    	
 			/*$(document).on("click", '#useExample', function(e){ //bind click which Opera Mini likes better
