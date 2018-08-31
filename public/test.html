@@ -27,7 +27,7 @@
 				currentTestNumberForExample = 0;
 				$currentTable = $('table');
 				function logit(){
-					console.log(arguments);
+					//console.log(arguments);
 				}
 				function finishCriteriaFoundCallback(geneObject, currentGeneration){
 
@@ -35,7 +35,7 @@
 					$tr.append($("<td>").html(possibleVariables[currentExample].name));
 					$tr.append($("<td>").text(geneObject.gene));
 					$tr.append($("<td>").text(geneObject.fitness));
-					$tr.append($("<td>").text("generation: " + currentGeneration));
+					$tr.append($("<td>").text(currentGeneration));
 					$currentTable.append($tr);
 					
 					currentTestNumberForExample++;

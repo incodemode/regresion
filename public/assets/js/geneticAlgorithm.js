@@ -1,4 +1,4 @@
-
+genesUsed = [];
 function geneticAlgorithm(properties){
 
 	var validator = properties.validator;
@@ -11,8 +11,43 @@ function geneticAlgorithm(properties){
 	var newGenerationStartedCallback = properties.newGenerationStartedCallback;
 	var newGeneFoundCallback = properties.newGeneFoundCallback;
 	var finishCriteriaFoundCallback = properties.finishCriteriaFoundCallback;
-	
 
+	var lastGenesUsed = null;
+	var totalReverseFitness = null;
+	var elitistFunction = function(genes){
+		var maxAllowedFitness = genes[Math.floor(genes.length/2)].fitness;
+		var maxFitness = Math.min(maxAllowedFitness,genes[genes.length-1].fitness);
+		//var maxFitness = genes[genes.length-1].fitness;
+		//console.log("maxFitness", maxFitness);
+
+		if(lastGenesUsed != genes){
+			totalReverseFitness = 0;
+			for(var i = 0; i<genes.length; i++){
+				totalReverseFitness += 2 - (Math.min(maxAllowedFitness,genes[i].fitness)/maxFitness);
+				//totalReverseFitness += 1 - (genes[i].fitness/maxFitness);
+				//console.log("genes[i].fitness", genes[i].fitness);
+			}
+		}
+		//console.log("totalReverseFitness", totalReverseFitness);
+		var selector = Math.random()*totalReverseFitness;
+		//console.log("selector", selector)
+		//console.log(selector);
+		var currentReverseFitness = 0;
+		for(var i = 0;i<genes.length;i++){
+			currentReverseFitness += 2 - (Math.min(maxAllowedFitness,genes[i].fitness)/maxFitness);
+			//currentReverseFitness += 1 - (genes[i].fitness/maxFitness);
+			if(currentReverseFitness > selector){
+				//genesUsed.push(i);
+				return genes[i];
+			}
+		}
+		//genesUsed.push(genes.length-1);
+		return genes[genes.length-1];
+	};
+	var randomFunction = function(genes){
+		return genes[Math.floor(Math.random()*genes.length)];
+	};
+	var selectParent = elitistFunction;
 	var orderByFitness = function(genes){
 		
 		
@@ -35,12 +70,17 @@ function geneticAlgorithm(properties){
 		var working = false;
 		var lastGenerationFitnessChange = 0;
 		var lastFitness = null;
+
 			function iterable(){
 				
 				switch(status){
 					case "fillingInitialSetup":
 						var possibleGene = randomize();
 						tryPushGene(newGenes, possibleGene);	
+						if(newGenes.length != 0 && newGenes[0].fitness ==0){
+							finishCriteriaFoundCallback(newGenes[0], currentGeneration);
+							return;
+						}
 						if(newGenes.length>=populationCount){
 							status = "fillingGenerations";
 						}
@@ -71,8 +111,8 @@ function geneticAlgorithm(properties){
 							}
 							
 						}else{
-							var gene1 = genes[Math.floor(Math.random()*genes.length)];
-							var gene2 = genes[Math.floor(Math.random()*genes.length)];
+							var gene1 = selectParent(genes);
+							var gene2 = selectParent(genes);
 							var gene3 = crossover(gene1.gene, gene2.gene);
 							tryPushGene(newGenes, gene3);
 							
@@ -85,6 +125,7 @@ function geneticAlgorithm(properties){
 
 				}
 				setTimeout(iterable,1);
+			
 			
 		}
 		newGenerationStartedCallback(1);

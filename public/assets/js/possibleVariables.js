@@ -15,6 +15,13 @@
 			]
 		},
 		{
+			name: 'y=3(x<sub>0</sub>+1)',
+			description: 'suma y multiplicación de una variable',
+			variables: [
+				[3,6,9]
+			]
+		},
+		{
 			name: 'y=x<sub>0</sub>+x<sub>1</sub>',
 			description: 'suma de dos variables',
 			variables: [
@@ -33,6 +40,15 @@
 			]
 		},
 		{
+			name: 'y=(x<sub>0</sub><sup>2</sup>+x<sub>1</sub><sup>2</sup>)<sup>0.5</sup>',
+			description: 'circulo',
+			variables: [
+				[1,1,2,2,4,3],
+				[1,2,2,3,3,4],
+				["sqrt(2)","sqrt(5)","sqrt(8)","sqrt(13)",5,5]
+			]
+		},
+		{
 			name: 'Precio de bitcoin de 2017',
 			description: 'El precio diario de bitcoin desde 2017 hasta junio de 2018',
 			variables: [
@@ -46,14 +62,14 @@
 		for(var i = 0; i < variables[0].length;i++){
 			variableRunSet = {};
 			for(var j = 0; j<variables.length-1;j++){
-				variableRunSet['x'+j] = variables[j][i];
+				variableRunSet['x'+j] = math.eval(variables[j][i]);
 			}
 			if(variables.length == 1){
 
 				variableRunSet['x0'] = i;
 					
 			}
-			variableRunSet.y = variables[variables.length-1][i];
+			variableRunSet.y = math.eval(variables[variables.length-1][i]);
 			runsSet[i] = variableRunSet;
 		}
 		return runsSet;
