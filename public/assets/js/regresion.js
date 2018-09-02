@@ -10,7 +10,7 @@ var regresion = function(properties){
 	};
 	var randomize = function(limit){
 		if(limit == undefined){
-			limit = 10;
+			limit = 5;
 		}
 		var possibleNodes;
 		if(limit <= 0){
