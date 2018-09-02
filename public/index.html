@@ -86,7 +86,7 @@
 				var collapseId = 'generation_collapse_'+generationNumber;
 				$newCard.attr('id', cardId);
 				$newCard.find('[data-title]').attr('data-target', '#'+collapseId).attr('aria-controls', collapseId)
-					.html('<span class="fas fa-chevron-down"> </span>&nbsp;Generación ' + generationNumber);
+					.html('<span class="fas fa-chevron-circle-down"> </span>&nbsp;Generación ' + generationNumber);
 				$newCard.find('[data-heading]').attr('id', headerId);
 				$newCard.find('[data-container]').attr('aria-labelledby',headerId).attr('id', collapseId);
 				$newCard.find('[data-body]').html("Vacio");
@@ -578,17 +578,17 @@
 				window.location.reload();
 			});
 			$('#accordion').on('shown.bs.collapse', function(evt) {
-				//$("#accordion").find(".fa-chevron-up").removeClass("fa-chevron-up").addClass("fa-chevron-down");
+				//$("#accordion").find(".fa-chevron-circle-up").removeClass("fa-chevron-circle-up").addClass("fa-chevron-circle-down");
 				$(evt.target).closest(".card")
-					.find(".fa-chevron-down")
-					.removeClass("fa-chevron-down")
-					.addClass("fa-chevron-right");
+					.find(".fa-chevron-circle-down")
+					.removeClass("fa-chevron-circle-down")
+					.addClass("fa-chevron-circle-right");
 			  	$('html, body').animate({
 	                scrollTop: $(evt.target).closest(".card").offset().top
 	            }, 400);
 			});
 			$('#accordion').on('hidden.bs.collapse', function(evt) {
-				$(evt.target).closest(".card").find(".fa-chevron-right").removeClass("fa-chevron-right").addClass("fa-chevron-down");
+				$(evt.target).closest(".card").find(".fa-chevron-circle-right").removeClass("fa-chevron-circle-right").addClass("fa-chevron-circle-down");
 			});
 		});
 	</script>
