@@ -44,10 +44,70 @@ function geneticAlgorithm(properties){
 		//genesUsed.push(genes.length-1);
 		return genes[genes.length-1];
 	};
+	var elitistFunction2 = function(genes){
+		//var maxAllowedFitness = genes[Math.floor(genes.length/2)].fitness;
+		var maxFitness = genes[genes.length-1].fitness;
+		//var maxFitness = genes[genes.length-1].fitness;
+		//console.log("maxFitness", maxFitness);
+
+		if(lastGenesUsed != genes){
+			totalReverseFitness = 0;
+			for(var i = 0; i<genes.length; i++){
+				totalReverseFitness += 2 - (genes[i].fitness/maxFitness);
+				//totalReverseFitness += 1 - (genes[i].fitness/maxFitness);
+				//console.log("genes[i].fitness", genes[i].fitness);
+			}
+		}
+		//console.log("totalReverseFitness", totalReverseFitness);
+		var selector = Math.random()*totalReverseFitness;
+		//console.log("selector", selector)
+		//console.log(selector);
+		var currentReverseFitness = 0;
+		for(var i = 0;i<genes.length;i++){
+			currentReverseFitness += 2 - (genes[i].fitness/maxFitness);
+			//currentReverseFitness += 1 - (genes[i].fitness/maxFitness);
+			if(currentReverseFitness > selector){
+				genesUsed.push(i);
+				return genes[i];
+			}
+		}
+		genesUsed.push(genes.length-1);
+		return genes[genes.length-1];
+	};
+	var elitistFunction3 = function(genes){
+		//var maxAllowedFitness = genes[Math.floor(genes.length/2)].fitness;
+		var maxFitness = genes[genes.length-1].fitness;
+		//var maxFitness = genes[genes.length-1].fitness;
+		//console.log("maxFitness", maxFitness);
+
+		if(lastGenesUsed != genes){
+			totalReverseFitness = 0;
+			for(var i = 0; i<genes.length; i++){
+				totalReverseFitness += 1.2 - (genes[i].fitness/maxFitness);
+				//totalReverseFitness += 1 - (genes[i].fitness/maxFitness);
+				//console.log("genes[i].fitness", genes[i].fitness);
+			}
+		}
+		//console.log("totalReverseFitness", totalReverseFitness);
+		var selector = Math.random()*totalReverseFitness;
+		//console.log("selector", selector)
+		//console.log(selector);
+		var currentReverseFitness = 0;
+		for(var i = 0;i<genes.length;i++){
+			currentReverseFitness += 1.2 - (genes[i].fitness/maxFitness);
+			//currentReverseFitness += 1 - (genes[i].fitness/maxFitness);
+			if(currentReverseFitness > selector){
+				//genesUsed.push(i);
+				return genes[i];
+			}
+		}
+		//genesUsed.push(genes.length-1);
+		return genes[genes.length-1];
+	};
 	var randomFunction = function(genes){
 		return genes[Math.floor(Math.random()*genes.length)];
 	};
-	var selectParent = elitistFunction;
+	var selectParent = elitistFunction3;
 	var orderByFitness = function(genes){
 		
 		
