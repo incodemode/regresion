@@ -12,6 +12,8 @@
 	</script>
 
 	<title> Funciones de Regresión por Medio de Algoritmos Genéticos</title>
+	<meta name="description" content="Encuentra funciones de regresión de tus datos por medio de algoritmos genéticos."/>
+	<meta name="keywords" content="Analisis de Regresion, Funciones de regresion, algoritmos genéticos, inteligencia artificial, analisis de datos, algoritmos evolutivos"/>
 	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 	<meta charset="UTF-8">
 	<script src="assets/js/jquery-3.3.1.min.js"></script>
@@ -84,7 +86,7 @@
 				var collapseId = 'generation_collapse_'+generationNumber;
 				$newCard.attr('id', cardId);
 				$newCard.find('[data-title]').attr('data-target', '#'+collapseId).attr('aria-controls', collapseId)
-					.html('<span class="fas fa-plus"> </span>&nbsp;Generación ' + generationNumber);
+					.html('<span class="fas fa-chevron-down"> </span>&nbsp;Generación ' + generationNumber);
 				$newCard.find('[data-heading]').attr('id', headerId);
 				$newCard.find('[data-container]').attr('aria-labelledby',headerId).attr('id', collapseId);
 				$newCard.find('[data-body]').html("Vacio");
@@ -576,11 +578,18 @@
 				window.location.reload();
 			});
 			$('#accordion').on('shown.bs.collapse', function(evt) {
-				console.log(evt);
+				//$("#accordion").find(".fa-chevron-up").removeClass("fa-chevron-up").addClass("fa-chevron-down");
+				$(evt.target).closest(".card")
+					.find(".fa-chevron-down")
+					.removeClass("fa-chevron-down")
+					.addClass("fa-chevron-right");
 			  	$('html, body').animate({
 	                scrollTop: $(evt.target).closest(".card").offset().top
 	            }, 400);
-			})
+			});
+			$('#accordion').on('hidden.bs.collapse', function(evt) {
+				$(evt.target).closest(".card").find(".fa-chevron-right").removeClass("fa-chevron-right").addClass("fa-chevron-down");
+			});
 		});
 	</script>
 </head>

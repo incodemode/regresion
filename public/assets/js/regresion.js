@@ -10,7 +10,7 @@ var regresion = function(properties){
 	};
 	var randomize = function(limit){
 		if(limit == undefined){
-			limit = 5;
+			limit = 2;
 		}
 		var possibleNodes;
 		if(limit <= 0){
@@ -30,7 +30,7 @@ var regresion = function(properties){
 			case "^":
 				var op1 = randomize(limit -1);
 				var op2 = randomize(limit -1);
-				genes = op1+operator+op2;
+				genes = "("+op1+operator+op2+")";
 				break;
 			case "pow":
 			case "log":
