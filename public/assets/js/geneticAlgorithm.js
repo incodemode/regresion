@@ -136,7 +136,7 @@ function geneticAlgorithm(properties){
 				switch(status){
 					case "fillingInitialSetup":
 						var possibleGene = randomize();
-						tryPushGene(newGenes, possibleGene);	
+						tryPushGene(newGenes, {gene:possibleGene});	
 						if(newGenes.length != 0 && newGenes[0].fitness ==0){
 							finishCriteriaFoundCallback(newGenes[0], currentGeneration);
 							return;
@@ -174,7 +174,7 @@ function geneticAlgorithm(properties){
 							var gene1 = selectParent(genes);
 							var gene2 = selectParent(genes);
 							var gene3 = crossover(gene1.gene, gene2.gene);
-							tryPushGene(newGenes, gene3);
+							tryPushGene(newGenes, {gene:gene3});
 							
 							if(newGenes[0].fitness ==0){
 								finishCriteriaFoundCallback(newGenes[0], currentGeneration);
@@ -184,36 +184,36 @@ function geneticAlgorithm(properties){
 						break;
 
 				}
-				setTimeout(iterable,1);
+				setTimeout(iterable,5);
 			
 			
 		}
 		newGenerationStartedCallback(1);
-		setTimeout(iterable,1);
+		setTimeout(iterable,5);
 
 				
 	
 	}
 
-	function tryPushGene(genes, gene){
+	function tryPushGene(genes, geneObject){
 		
 			
-		var gene = validator(gene);
-		if(!gene){
+		var geneObject = validator(geneObject);
+		if(!geneObject){
 			return;
 		}
 		for(var i in genes){
 			existentObject = genes[i];
-			if(equals(gene, existentObject.gene)|| existentObject.gene == gene){
+			if(equals(geneObject.gene, existentObject.gene)|| existentObject.gene == geneObject.gene){
 				return;
 			}
 		}
-		var fitness = fitnessFunction(gene);
+		//var fitness = fitnessFunction(gene);
 		var inserted = false;
-		var geneObject = {number:1,gene:gene, fitness: fitness};
+		//var geneObject = {number:1,gene:gene, fitness: fitness};
 		var i = 0;
 		for(i in genes){
-			if(!inserted && genes[i].fitness>=fitness){
+			if(!inserted && genes[i].fitness>=geneObject.fitness){
 				geneObject.number = 1+parseInt(i);
 				genes.splice(i,0,geneObject);
 				newGeneFoundCallback(geneObject);

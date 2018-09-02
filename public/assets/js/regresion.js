@@ -76,32 +76,32 @@ var regresion = function(properties){
 
 	var fitnessFunction = function(gene){
 		var totalDifference = 0;
-		for(variablesRunIndex in variablesRunsSet){
-			var variablesRun = variablesRunsSet[variablesRunIndex];
-			var realY = variablesRun.y;
-		    var temp = math.parse(gene).eval(variablesRun);
-		    var difference = Math.pow(temp-realY,2);
-		    totalDifference+=difference;	
+		try {
+			var mathObj = math.parse(gene);
+			for(variablesRunIndex in variablesRunsSet){
+				var variablesRun = variablesRunsSet[variablesRunIndex];
+				var realY = variablesRun.y;
+			    var temp = mathObj.eval(variablesRun);
+			    var difference = Math.pow(temp-realY,2);
+			    totalDifference+=difference;	
+			}
+		} catch (e) {
+		    return false;
 		}
 		return totalDifference;
 	}
-	var validator = function(code){
-
+	var validator = function(geneObject){
+		var code = geneObject.gene;
 		if(code == null || code.length>50 || code == 'NaNi'){
 			return false;
 		}
-			for(variablesRunIndex in variablesRunsSet){
-				variablesRun = variablesRunsSet[variablesRunIndex];
-				var y = null;
-				try {
-				    
-				    var temp = math.parse(code).eval(variablesRun);
-				    
-				    
-				} catch (e) {
-				    return false;
+			/*
+				var mathObj = math.parse(code)
+				for(variablesRunIndex in variablesRunsSet){
+					variablesRun = variablesRunsSet[variablesRunIndex];
+				    var temp = mathObj.eval(variablesRun);
 				}
-			}
+			*/
 			try{
 				var simplifyExtraRules = math.simplify.rules.concat([
 				'tan(atan(n1)) -> n1',
@@ -119,11 +119,11 @@ var regresion = function(properties){
 				return false;
 			}
 			var fitnessValue = fitnessFunction(code);
-			if(isNaN(fitnessValue)||fitnessValue == null|| fitnessValue == 'NaNi' || fitnessValue == 'Infinity'){
+			if(isNaN(fitnessValue)||fitnessValue == null|| fitnessValue == 'NaNi' || fitnessValue == 'Infinity' || fitnessValue === false){
 				return false;
 			}
 			
-			return code;
+			return {gene:code,fitness:fitnessValue};
 	};
 	var equals = function(gene1, gene2){
 		var equal = math.parse(gene1).equals(gene2);
