@@ -31,9 +31,29 @@
 	<script src="assets/js/popper.min.js"></script>
 	<script src="assets/bootstrap/js/bootstrap.min.js"></script>
 	<script src="assets/js/bootstrap.operamini.fix.js"></script>
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-MML-AM_CHTML""></script>
-	<link rel="stylesheet" type="text/css" href="assets/fontawesome-free-5.3.1-web/css/all.min.css">
+	<script src="assets/js/DOM.isOverflown.js"></script>
 	
+	<!--script>
+		window.MathJax = {
+		  menuSettings: {
+		    autocollapse: true
+		  }
+		};
+	</script-->
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-MML-AM_CHTML-full"></script>
+	<link rel="stylesheet" type="text/css" href="assets/fontawesome-free-5.3.1-web/css/all.min.css">
+	<style>
+	::-webkit-scrollbar {
+	    -webkit-appearance: none;
+	    width: 7px;
+	    height: 7px;
+	}
+	::-webkit-scrollbar-thumb {
+	    border-radius: 4px;
+	    background-color: rgba(0,0,0,.5);
+	    box-shadow: 0 0 1px rgba(255,255,255,.5);
+	}
+</style>
 	<script>
 		function auto_grow(element) {
 		    element.style.height = "5px";
@@ -359,6 +379,7 @@
 			var configForXGraph = [];
 			var xGraph = [];
 			$(document).on("click", "#accordion [data-view]",function(evt){
+				var $functionVisor = $("#functionVisor");
 				configForXGraph = [];
 				xGraph = [];
 				$("#summaryGraphs").find("[data-summaryGraph]:not(#emptyGraph)").remove();
@@ -507,27 +528,10 @@
 							
 						}
 						setValues(dataForX, i);
-						$functionVisor = $("#functionVisor");
-						$functionVisor.show();
-						var latex = math.parse(geneText)
-							.toTex({parenthesis: 'keep', implicit: 'hide'})
-							.replace(/x([0-9])*/g,"x_{$1}");
-						//$functionVisor.find("[data-gene]").text("y = " + geneText);
-						$functionVisor.find("[data-gene]").text("$$y = " + latex+ "$$");
-						$functionVisor.find("[data-lt]").text("$y=" + latex+ "$");
-						$functionVisor.find("[data-js]").text("y="+geneText);
-						var waLink = $('<a>')
-							.attr("href", "http://www.wolframalpha.com/input/?i="+encodeURI("y="+geneText))
-							.attr("target", "_blank")
-							.text("http://www.wolframalpha.com/...");
-						$functionVisor.find("[data-wa]").empty().append(waLink);
-						var waGraphLink = $('<a>')
-							.attr("href", "http://www.wolframalpha.com/input/?i="+encodeURI("graph y="+geneText))
-							.attr("target", "_blank")
-							.text("http://www.wolframalpha.com/...");
-						$functionVisor.find("[data-waGraph]").empty().append(waGraphLink);
+						
+			      	
+						
 				      	
-				      	var queue = MathJax.Hub.Queue(["Typeset",MathJax.Hub,$functionVisor[0]]);
 				      	/*MathJax.Callback.Queue.wait(function(){
 				      		alert("hola");
 				      	});*/
@@ -572,12 +576,46 @@
 						    // use _datasetIndex and _index from each element of the activePoints array
 						};
 						
-						$('html, body').animate({
-		                    scrollTop: $functionVisor.offset().top
-		                }, 400);
+						
 					}
 					keepScope(independentVariable);
 				}
+
+				$functionVisor.show(400, function(){
+
+
+					var latex = math.parse(geneText)
+						.toTex({parenthesis: 'keep', implicit: 'hide'})
+						.replace(/x([0-9])*/g,"x_{$1}");
+					//$functionVisor.find("[data-gene]").text("y = " + geneText);
+					$functionVisor.find("[data-gene]").text('$$y = ' + latex.replace(/\.([0-9]{2})[0-9]*/g,'.$1')+ '$$');
+					//$functionVisor.find("[data-gene]").text('$$y = ' + latex+ '$$');
+
+					$functionVisor.find("[data-lt]").text("$y=" + latex+ "$");
+					$functionVisor.find("[data-js]").text("y="+geneText);
+					var waLink = $('<a>')
+						.attr("href", "http://www.wolframalpha.com/input/?i="+encodeURI("y="+geneText))
+						.attr("target", "_blank")
+						.text("http://www.wolframalpha.com/...");
+					$functionVisor.find("[data-wa]").empty().append(waLink);
+					var waGraphLink = $('<a>')
+						.attr("href", "http://www.wolframalpha.com/input/?i="+encodeURI("graph y="+geneText))
+						.attr("target", "_blank")
+						.text("http://www.wolframalpha.com/...");
+					$functionVisor.find("[data-waGraph]").empty().append(waGraphLink);
+			      	
+			      	
+			      	var queue = MathJax.Hub.Queue(["Typeset",MathJax.Hub,$functionVisor[0]]);
+			      	
+
+		      		MathJax.Hub.Register.StartupHook("End",function(){
+		      			
+		      		});	
+		      	});
+		      		$('html, body').animate({
+	                    scrollTop: $functionVisor.offset().top
+	                }, 400);
+	      		
 			});
 			$(document).on("click","#refresh",function(evt){
 				window.location.reload();
@@ -774,7 +812,13 @@
   					</div>
   
 					<div class="card-body">
-    					<h5 class="card-title" data-gene id="pretty">Función</h5>
+    					<h4 class="card-title d-block">
+    						<div class="d-none d-xl-block" id="pretty" style="overflow:auto;font-size:100%;"
+    							data-gene>Función</div>
+    						<div class="d-block d-xl-none" id="pretty" style="overflow:auto;font-size:60%;"
+    							data-gene>Función</div>
+    					</h4>
+    					
 						<p>
 							math.js: <span data-js></span><br>
 							WolframAlpha: <span data-wa></span><br>
