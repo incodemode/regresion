@@ -43,9 +43,9 @@
 			name: 'y=(x<sub>0</sub><sup>2</sup>+x<sub>1</sub><sup>2</sup>)<sup>0.5</sup>',
 			description: 'circulo',
 			variables: [
-				[1,1,2,2,4,3],
-				[1,2,2,3,3,4],
-				["sqrt(2)","sqrt(5)","sqrt(8)","sqrt(13)",5,5]
+				[1,1,2,2,4,3,10],
+				[1,2,2,3,3,4,10],
+				["sqrt(2)","sqrt(5)","sqrt(8)","sqrt(13)",5,5,"sqrt(200)"]
 			]
 		},
 		{

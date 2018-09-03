@@ -1,5 +1,8 @@
+function sortNumber(a,b) {
+    return a - b;
+}
 function unique(arr){
-	var sorted_arr = arr.slice().sort();
+	var sorted_arr = arr.slice().sort(sortNumber);
 
 	var results = [];
 	for (var index in sorted_arr) {

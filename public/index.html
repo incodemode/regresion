@@ -262,13 +262,17 @@
 				var totalIndependentInputs = $independentInputs.length;
 				$independentInputs.each(function(index){
 
+					//independentGroups["x" + (totalIndependentInputs-index-1)] 
 					independentGroups["x" + (totalIndependentInputs-index-1)] 
 						= clean2($(this).val().trim().split(','),"");
+						//= $(this).val().trim().split(',');
 					independentLabels[totalIndependentInputs-index-1] = independentGroups["x" + (totalIndependentInputs-index-1)];
+					
 					/*independentGroups["x" + (totalIndependentInputs-index-1)] = 
 						$.grep(independentGroups["x" + (totalIndependentInputs-index-1)] ,function(n){ return n != "" });*/
 					independentVariables.push((totalIndependentInputs-index-1));
 				});
+				
 				if(independentVariables.length == 0){
 					independentVariables.push(0);
 				}
@@ -521,7 +525,7 @@
 							.attr("target", "_blank")
 							.text("http://www.wolframalpha.com/...");
 						$functionVisor.find("[data-waGraph]").empty().append(waGraphLink);
-				      	console.log('LaTeX expression:', latex)
+				      	
 				      	var queue = MathJax.Hub.Queue(["Typeset",MathJax.Hub,$functionVisor[0]]);
 				      	/*MathJax.Callback.Queue.wait(function(){
 				      		alert("hola");
@@ -627,14 +631,14 @@
 							    	</div>
 							    <div class="btn-group">
 							  		<button type="button" class="btn btn-info" id="addDependentVariableButton"> <span class="fas fa-pencil-alt"> </span>&nbsp;
-							  			<div class="d-none d-sm-inline">Agregar Variable Independiente X<sub>n</sub></div>
-							  			<div class="d-inline d-sm-none">Agregar X<sub>n</sub></div></button>
+							  			<div class="d-none d-xl-inline">Agregar Variable Independiente X<sub>n</sub></div>
+							  			<div class="d-inline d-xl-none">Agregar X<sub>n</sub></div></button>
 									  
 									 
 									  	<button class="btn btn-secondary dropdown-toggle" type="button" id="useExample" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" alt="Usar Ejemplo">
 										    <span class="fas fa-book"> </span>&nbsp;
-										    <div class="d-none d-sm-inline">Usar Ejemplo</div>
-										    <div class="d-inline d-sm-none">Ej.</div>
+										    <div class="d-none d-xl-inline">Usar Ejemplo</div>
+										    <div class="d-inline d-xl-none">Ej.</div>
 									  
 								  		</button>	
 									  <div class="dropdown-menu" aria-labelledby="useExample" id="useExampleDropdownItems">
@@ -658,7 +662,7 @@
 						  <div class="form-group" id="dependentVars" style="display:none;">
 
 						  	<div class="form-row">
-							  	<div class="input-group btn-group  d-inline d-sm-block">
+							  	<div class="input-group btn-group  d-inline d-xl-block">
 							    	<label for="exampleFormControlTextarea1" class="col-xl-3">Variables Independientes</label>
 							    	
 							    	<small class="form-text text-muted alert alert-info" id="independentNumbersAlert">
@@ -678,8 +682,8 @@
 								          <textarea class="form-control" rows="1" aria-label="Group of values for X0 separated by coma: 1,2,3,4" onkeyup="auto_grow(this)" data-independentVariableInput></textarea>
 								    	<div class="input-group-append"><span class="input-group-text">}</span></div>
 							    		<button type="button" class="btn btn-danger deleteDependantVar">  
-							    			<div class="d-none d-sm-inline"><span class="fas fa-eraser"></span> &nbsp; Borrar</div>
-										    <div class="d-inline d-sm-none"><span class="fas fa-trash-alt"></span></div>
+							    			<div class="d-none d-xl-inline"><span class="fas fa-eraser"></span> &nbsp; Borrar</div>
+										    <div class="d-inline d-xl-none"><span class="fas fa-trash-alt"></span></div>
 										</button>
 							    	</div>
 
@@ -714,21 +718,25 @@
 							<div class="form-row">
 						  		<div class="col-xl-2">
 							    </div>
-								<div class="btn-group col-xl-5">
-							  		<button type="button" class="btn btn-success" id="searchRegresionButton"> <span class="fas fa-calculator"> </span>&nbsp;
-							  			<div class="d-none d-xl-inline">Buscar Función de Regresión</div>
-							  			<div class="d-inline d-xl-none">Ejecutar</div>
-							  		</button>
-							  		<button class="btn btn-danger" type="button" id="refresh">
-										<span class="fas fa-sync-alt"> </span>&nbsp;
-										<div class="d-none d-xl-inline">Limpiar Formulario</div>
-							  			<div class="d-inline d-xl-none">Limpiar</div>
-									</button>
+							    <div class="col-xl-6">
+									<div class="btn-group">
+								  		<button type="button" class="btn btn-success" id="searchRegresionButton"> <span class="fas fa-calculator"> </span>&nbsp;
+								  			<div class="d-none d-xl-inline">Buscar Función de Regresión</div>
+								  			<div class="d-inline d-xl-none">Ejecutar</div>
+								  		</button>
+								  		<button class="btn btn-danger" type="button" id="refresh">
+											<span class="fas fa-sync-alt"> </span>&nbsp;
+											<div class="d-none d-xl-inline">Limpiar Datos</div>
+								  			<div class="d-inline d-xl-none">Limpiar</div>
+										</button>
+									</div>
 								</div>
-							  	<div class="col-xl-5">
-							  		<small class="form-text text-muted alert alert-info" id="quantityAlert">
-									    Todas las variables deben tener la misma cantidad de numeros.
-									</small>
+							  	<div class="col-xl-4">
+							  		<div>
+								  		<small class="form-text text-muted alert alert-info" id="quantityAlert">
+										    Todas las variables deben tener la misma cantidad de numeros.
+										</small>
+									</div>
 								</div>
 						  	</div>
 						  </div>
