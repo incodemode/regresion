@@ -417,8 +417,8 @@
 									text: 'Regresion con Algoritmos Genéticos'
 								},
 								tooltips: {
-									mode: 'index',
-									intersect: false
+									mode: 'x',
+									//intersect: false
 									
 								},
 								hover: {
@@ -504,6 +504,7 @@
 							
 							configForXGraph[i].data.datasets[0].data = dataValues;
 							configForXGraph[i].data.datasets[1].data = originalDataValues;
+							
 						}
 						setValues(dataForX, i);
 						$functionVisor = $("#functionVisor");
