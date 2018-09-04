@@ -90,12 +90,12 @@ function geneticAlgorithm(properties){
 						break;
 
 				}
-				setTimeout(iterable,5);
+				setTimeout(iterable,1);
 			
 			
 		}
 		newGenerationStartedCallback(1, null);
-		setTimeout(iterable,5);
+		setTimeout(iterable,1);
 
 				
 	

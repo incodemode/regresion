@@ -81,9 +81,9 @@ var regresion = function(properties){
 		}
 		var possibleNodes;
 		if(limit <= 0){
-			possibleNodes = ["int","number", "pi", "e", "var", "zero"];
+			possibleNodes = ["int","number", "pi", "e", "var", "zero", "one"];
 		}else{
-			possibleNodes = ["+","-","*","/","^","log", "par", "sin", "cos", "tan", "asin", "acos", "atan", "int", "number", "pi", "e", "var", "zero"];
+			possibleNodes = ["+","-","*","/","^","sqrt","log", "par", "sin", "cos", "tan", "asin", "acos", "atan", "int", "number", "pi", "e", "var", "zero", "one"];
 		}
 		var type = Math.floor(Math.random() * possibleNodes.length); // from 0 to latest character
 		var genes = "";
@@ -101,6 +101,7 @@ var regresion = function(properties){
 				break;
 			case "pow":
 			case "log":
+			//case "nthRoot":
 				var op1 = randomize(limit -1);
 				var op2 = randomize(limit -1);
 				genes = operator+"("+op1+","+op2+")";
@@ -115,6 +116,7 @@ var regresion = function(properties){
 			case "asin":
 			case "acos":
 			case "atan":
+			case "sqrt":
 				var op1 = randomize(limit -1);
 				genes = operator +"(" + op1 + ")";
 				break; 
@@ -136,7 +138,10 @@ var regresion = function(properties){
 				var genes = variableNames[variableIndex];
 				break;
 			case "zero":
-				var genes = 0;
+				var genes = "0";
+				break;
+			case "one":
+				var genes = "1";
 				break;
 		}
 		
