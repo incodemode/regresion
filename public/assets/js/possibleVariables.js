@@ -22,6 +22,14 @@
 			]
 		},
 		{
+			name: 'y=(x<sub>0</sub>+2)<sup>3</sup>',
+			description: 'suma y cubo',
+			variables: [
+				[8,27,64,125]
+			]
+		},
+		
+		{
 			name: 'y=x<sub>0</sub>+x<sub>1</sub>',
 			description: 'suma de dos variables',
 			variables: [

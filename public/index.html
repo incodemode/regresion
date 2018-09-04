@@ -95,7 +95,35 @@
 				
 			});
 			var generationCount = 0;
-			var newGenerationStartedCallback = function(generationNumber){
+			var genesFromFinishCriteria = null;
+			var lastSumFitness = null;
+			var lastGenerationFitnessSumChanged = null;
+			var newGenerationStartedCallback = function(generationNumber, previousGenes){
+
+				//obtain average of previous generation
+
+					
+				var newLastSumFitness = 0;
+				
+				//genesUnderScope = JSON.parse(JSON.stringify(genes)).splice(5,genes.length);
+				if(previousGenes){
+					for(var i = 0;i<5;i++){
+						newLastSumFitness = newLastSumFitness + previousGenes[i].fitness;
+					}
+					//if(lastSumFitness != newLastSumFitness){
+						lastSumFitness = newLastSumFitness;
+						var newAverageFitness = newLastSumFitness/5;
+						var newAveragePoint = {x:generationNumber-1,y:newAverageFitness};
+						config.data.datasets[1].data.push(newAveragePoint);
+						if(config.data.datasets[1].data.length >=3 
+							&& config.data.datasets[1].data[config.data.datasets[1].data.length-2].y == newAverageFitness
+							&& config.data.datasets[1].data[config.data.datasets[1].data.length-3].y == newAverageFitness){
+								config.data.datasets[1].data.splice(config.data.datasets[1].data.length-2,1);
+						}
+					//}
+
+				}
+
 				generationCount = generationNumber;
 				
 				var $empty = $('#emptyCard');
@@ -105,6 +133,7 @@
 				var headerId ='generation_header_'+generationNumber;
 				var collapseId = 'generation_collapse_'+generationNumber;
 				$newCard.attr('id', cardId);
+				$newCard.attr('data-generation', generationNumber);
 				$newCard.find('[data-title]').attr('data-target', '#'+collapseId).attr('aria-controls', collapseId)
 					.html('<span class="fas fa-chevron-circle-down"> </span>&nbsp;Generación ' + generationNumber);
 				$newCard.find('[data-heading]').attr('id', headerId);
@@ -116,12 +145,12 @@
 					
 					//$("#"+collapseId).collapse('show');
 				}});
-				if(config.data.datasets[0].data.length>=2 && config.data.datasets[0].data[config.data.datasets[0].data.length-1] == config.data.datasets[0].data[config.data.datasets[0].data.length-2]){
-					config.data.labels[config.data.labels.length-1] = generationNumber;
+				/*if(config.data.datasets[0].data.length>=1 && config.data.datasets[0].data[config.data.datasets[0].data.length-1].x == generationNumber){
+					config.data.datasets[0].data[config.data.datasets[0].data.length-1][config.data.labels.length-1] = generationNumber;
 				}else{
 
 					config.data.labels.push(generationNumber);
-				}
+				}*/
 				$("#chartHolder").show();
 				window.myLine.update();
 				//config.data.datasets[0].data[config.data.datasets[0].data.length] = minFitness;
@@ -153,19 +182,36 @@
 				
 				$row.show(400);
 				
-
-					if(config.data.datasets[0].data[config.data.labels.length-1] != minFitness){
-						config.data.datasets[0].data[config.data.labels.length-1] = minFitness;
+				var lastData = config.data.datasets[0].data[config.data.datasets[0].data.length-1];
+				if(lastData !== undefined){
+					if(lastData.x == generationCount){
+						if(lastData.y != minFitness){
+							lastData.y = minFitness;
+							window.myLine.update();		
+						}
+					}else{//} && lastData.y != minFitness){
+						config.data.datasets[0].data.push({x:generationCount,y:minFitness});
+						if(config.data.datasets[0].data.length >=4 
+							&& config.data.datasets[0].data[config.data.datasets[0].data.length-3].y 
+							== config.data.datasets[0].data[config.data.datasets[0].data.length-2].y
+							&& config.data.datasets[0].data[config.data.datasets[0].data.length-4].y 
+							== config.data.datasets[0].data[config.data.datasets[0].data.length-3].y){
+								config.data.datasets[0].data.splice(config.data.datasets[0].data.length-3,1);
+						}
 						window.myLine.update();
 					}
+				}else{
+					config.data.datasets[0].data.push({x:generationCount,y:minFitness});
+					window.myLine.update();
+				}
 				
 			}
 
 
 			var config = {
-				type: 'line',
+				type: 'scatter',
 				data: {
-					labels: [],
+					//labels: [],
 					datasets: [{
 						label: 'Fitness',
 						backgroundColor: "#0000FF",
@@ -174,7 +220,18 @@
 							
 						],
 						fill: false,
-						lineTension:0
+						lineTension:0,
+						showLine:true
+					}, {
+						label: 'Top 5 Average Fitness',
+						backgroundColor: "#00FF00",
+						borderColor: "#00FF00",
+						data: [
+							
+						],
+						fill: false,
+						lineTension:0,
+						showLine:true
 					}]
 				},
 				options: {
@@ -184,8 +241,8 @@
 						text: 'Regresion con Algoritmos Genéticos'
 					},
 					tooltips: {
-						mode: 'index',
-						intersect: false,
+						mode: 'x',
+						intersect: true,
 						callbacks:{
 							title:function(tooltipItems, data){
 								
@@ -199,19 +256,33 @@
 					},
 					scales: {
 						xAxes: [{
+							
 							display: true,
 							scaleLabel: {
 								display: true,
 								labelString: 'Generación'
+							},
+							ticks:{
+								suggestedMin: 1,
+								userCallback: function(label, index, labels) {
+				                     // when the floored value is the same as the value we have a whole number
+				                    if (Math.floor(label) === label) {
+				                        return parseInt(label);
+				                    }
+
+				                }
 							}
 						}],
 						yAxes: [{
+							type: "logarithmic",
 							display: true,
 							scaleLabel: {
 								display: true,
 								labelString: 'Fitness'
 							},
-							type:"logarithmic"
+							ticks: {
+								autoSkip: true
+							}
 						}]
 					}
 				}
@@ -363,6 +434,8 @@
 				}
 				
 				var r = regresion({
+					populationCount: 100,
+					generationsCount: 10000,
 					variablesRunsSet:variablesRunsSet,
 					newGenerationStartedCallback:newGenerationStartedCallback,
 					newGeneFoundCallback:newGeneFoundCallback,
@@ -387,6 +460,9 @@
 				
 
 				var geneText = $(this).closest('tr').find('[data-gene]').text();
+				var numberText = $(this).closest('tr').find('[data-number]').text();
+				var fitnessText = $(this).closest('tr').find('[data-fitness]').text();
+				var generationText = $(this).closest('.card').attr('data-generation');
 
 				for(var i in independentVariables){
 					var independentVariable = independentVariables[i];
@@ -532,12 +608,7 @@
 			      	
 						
 				      	
-				      	/*MathJax.Callback.Queue.wait(function(){
-				      		alert("hola");
-				      	});*/
-						// display and re-render the expression
-						//elem = MathJax.Hub.getAllJax('pretty')[0];
-						//MathJax.Hub.Queue(['Text', elem, latex]);
+				      	
 
 						var $canvas = $newGraph.find("[data-canvas]");
 						var ctx = $canvas[0].getContext('2d');
@@ -591,15 +662,18 @@
 					$functionVisor.find("[data-gene]").text('$$y = ' + latex.replace(/\.([0-9]{2})[0-9]*/g,'.$1')+ '$$');
 					//$functionVisor.find("[data-gene]").text('$$y = ' + latex+ '$$');
 
+					$functionVisor.find("[data-number]").text(numberText);
+					$functionVisor.find("[data-generation]").text(generationText);
+					$functionVisor.find("[data-fitness]").text(fitnessText);
 					$functionVisor.find("[data-lt]").text("$y=" + latex+ "$");
 					$functionVisor.find("[data-js]").text("y="+geneText);
 					var waLink = $('<a>')
-						.attr("href", "http://www.wolframalpha.com/input/?i="+encodeURI("y="+geneText))
+						.attr("href", "http://www.wolframalpha.com/input/?i="+encodeURIComponent("y="+geneText))
 						.attr("target", "_blank")
 						.text("http://www.wolframalpha.com/...");
 					$functionVisor.find("[data-wa]").empty().append(waLink);
 					var waGraphLink = $('<a>')
-						.attr("href", "http://www.wolframalpha.com/input/?i="+encodeURI("graph y="+geneText))
+						.attr("href", "http://www.wolframalpha.com/input/?i="+encodeURIComponent("graph y="+geneText))
 						.attr("target", "_blank")
 						.text("http://www.wolframalpha.com/...");
 					$functionVisor.find("[data-waGraph]").empty().append(waGraphLink);
@@ -813,18 +887,35 @@
   
 					<div class="card-body">
     					<h4 class="card-title d-block">
-    						<div class="d-none d-xl-block" id="pretty" style="overflow:auto;font-size:100%;"
+    						<div class="d-none d-sm-block" style="overflow:auto;font-size:100%;"
     							data-gene>Función</div>
-    						<div class="d-block d-xl-none" id="pretty" style="overflow:auto;font-size:60%;"
+    						<div class="d-block d-sm-none" style="overflow:auto;font-size:60%;"
     							data-gene>Función</div>
     					</h4>
-    					
-						<p>
-							math.js: <span data-js></span><br>
-							WolframAlpha: <span data-wa></span><br>
-							Graficar en WolframAlpha: <span data-waGraph></span><br>
-							LaTex: <span data-lt></span><br>
-						</p>
+						<div class="row  align-items-center">
+							<div class="col col-lg-2"><strong>Generación:</strong></div>
+							<div class="col col-lg-1" data-generation></div>
+							<div class="w-100 d-lg-none"></div>
+							<div class="col col-lg-2"><strong>Número:</strong></div>
+							<div class="col col-lg-1" data-number></div>
+							<div class="w-100 d-lg-none"></div>
+							<div class="col col-lg-2"><strong>Fitness:</strong></div>
+							<div class="col col-lg-4" data-fitness></div>
+							<div class="w-100 d-lg-none"></div>
+							
+							<div class="col col-lg-2"><strong>math.js:</strong> </div>
+							<div class="col col-lg-4"><span data-js></span></div>
+							<div class="w-100 d-lg-none"></div>
+							<div class="col col-lg-2"><strong>LaTex:</strong> </div>
+							<div class="col col-lg-4"><span data-lt></span></div>
+							<div class="w-100 d-lg-none"></div>
+						
+							<div class="col col-lg-2"><strong>Graficar en WolframAlpha:</strong></div>
+							<div class="col col-lg-4" data-waGraph></div>
+							<div class="w-100 d-lg-none"></div>
+							<div class="col col-lg-2"><strong>WolframAlpha:</strong> </div>
+							<div class="col col-lg-4"><span data-wa></span></div>
+						</div>
 						<div class="row" id="summaryGraphs"> <!-- resumen de función -->
 						  <div class="col-xl-6" id="emptyGraph" style="display:none;" data-summaryGraph>
 						    <div class="card">

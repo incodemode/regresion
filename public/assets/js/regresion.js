@@ -3,8 +3,75 @@ var regresion = function(properties){
 	var newGenerationStartedCallback = properties.newGenerationStartedCallback;
 	var newGeneFoundCallback = properties.newGeneFoundCallback;
 	var finishCriteriaFoundCallback = properties.finishCriteriaFoundCallback;
+	var populationCount = properties.populationCount;
+	var generationsCount = properties.generationsCount;
 	
 	var variableNames = [];
+	
+	var lastGenesUsed = null;
+	var totalReverseFitness = null;
+	var elitistParentSelector = function(genes){
+		
+		var maxFitness = genes[genes.length-1].fitness;
+		
+		if(lastGenesUsed != genes){
+			totalReverseFitness = 0;
+			for(var i = 0; i<genes.length; i++){
+				totalReverseFitness += 1.2 - (genes[i].fitness/maxFitness);
+			}
+		}
+		
+		var selector = Math.random()*totalReverseFitness;
+		var currentReverseFitness = 0;
+		for(var i = 0;i<genes.length;i++){
+			currentReverseFitness += 1.2 - (genes[i].fitness/maxFitness);
+			if(currentReverseFitness > selector){
+				return genes[i];
+			}
+		}
+		
+		return genes[genes.length-1];
+	};
+	var lastGenerationFitnessChange = 0;
+	var lastFitness = null;
+	function finishCriteriaTest(genes, currentGeneration){
+		if(lastFitness == null || lastFitness != newGenes[0].fitness){
+			lastFitness = newGenes[0].fitness;
+			lastGenerationFitnessChange = currentGeneration;
+		}
+		if(currentGeneration - lastGenerationFitnessChange > 99){
+			
+			return true;;
+		}
+		return false
+	}
+	var genesFromFinishCriteria = null;
+	var lastSumFitness = null;
+	var lastGenerationFitnessSumChanged = null;
+	function finishCriteriaTest2(genes, currentGeneration){
+		if(genes[0].fitness ==0){
+			return true;
+		}
+		if(genes.length != populationCount){
+			return false;
+		}
+		if(genesFromFinishCriteria == null || genesFromFinishCriteria != genes){
+			var newLastSumFitness = 0;
+			genesFromFinishCriteria = genes;
+			//genesUnderScope = JSON.parse(JSON.stringify(genes)).splice(5,genes.length);
+			for(var i = 0;i<5;i++){
+				newLastSumFitness = newLastSumFitness + genes[i].fitness;
+			}
+			if(lastSumFitness != newLastSumFitness){
+				lastSumFitness = newLastSumFitness;
+				lastGenerationFitnessSumChanged = currentGeneration;
+			}else if(currentGeneration-lastGenerationFitnessSumChanged > 99){
+				return true;
+			}
+			return false;
+		}
+		
+	}
 	function random_powerlaw(mini, maxi) {
 	    return Math.exp(Math.random()*(Math.log(maxi)-Math.log(mini)))*mini;
 	};
@@ -14,9 +81,9 @@ var regresion = function(properties){
 		}
 		var possibleNodes;
 		if(limit <= 0){
-			possibleNodes = ["int","number", "pi", "e", "var"];
+			possibleNodes = ["int","number", "pi", "e", "var", "zero"];
 		}else{
-			possibleNodes = ["+","-","*","/","^","log", "par", "sin", "cos", "tan", "asin", "acos", "atan", "int", "number", "pi", "e", "var"];
+			possibleNodes = ["+","-","*","/","^","log", "par", "sin", "cos", "tan", "asin", "acos", "atan", "int", "number", "pi", "e", "var", "zero"];
 		}
 		var type = Math.floor(Math.random() * possibleNodes.length); // from 0 to latest character
 		var genes = "";
@@ -67,6 +134,9 @@ var regresion = function(properties){
 			case "var":
 				var variableIndex = Math.floor(Math.random() * variableNames.length); // from 0 to latest character
 				var genes = variableNames[variableIndex];
+				break;
+			case "zero":
+				var genes = 0;
 				break;
 		}
 		
@@ -131,7 +201,14 @@ var regresion = function(properties){
 	};
 	var crossover = function(gene1, gene2){
 		try{
-			
+			if(math.random()<0.1){
+				var gene1 = randomize();
+				//pruneTwoNode = math.parse(mutationString);
+			}
+			if(math.random()<0.1){
+				var gene2 = randomize();
+				//pruneTwoNode = math.parse(mutationString);
+			}
 
 			var gene1Nodes = [];
 			var gene2Nodes = [];
@@ -165,10 +242,7 @@ var regresion = function(properties){
 				}
 				pruneTwoCount++;
 			});
-			if(math.random()<0.1){
-				var mutationString = randomize();
-				pruneTwoNode = math.parse(mutationString);
-			}
+			
 			if(pruneOneParent!== null){
 				eval('pruneOneParent.' + pruneOnePath + '=pruneTwoNode;');
 			}else{
@@ -184,7 +258,9 @@ var regresion = function(properties){
 		
 		return crossedString;
 	}
+	
 	this.execute = function(){
+		
 		variableNames = [];
 		for(variableName in variablesRunsSet[0]){
 			if(variableName != "y"){
@@ -195,10 +271,12 @@ var regresion = function(properties){
 			validator: validator,
 			randomize: randomize,
 			equals: equals,
-			generationsCount:10000,
-			populationCount:100,
+			generationsCount:generationsCount,
+			populationCount:populationCount,
 			fitnessFunction: fitnessFunction,
 			crossover: crossover,
+			selectParent: elitistParentSelector,
+			finishCriteriaTest: finishCriteriaTest2,
 			newGenerationStartedCallback:newGenerationStartedCallback,
 			newGeneFoundCallback:newGeneFoundCallback,
 			finishCriteriaFoundCallback:finishCriteriaFoundCallback
