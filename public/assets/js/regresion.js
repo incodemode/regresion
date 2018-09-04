@@ -206,14 +206,11 @@ var regresion = function(properties){
 	};
 	var crossover = function(gene1, gene2){
 		try{
-			if(math.random()<0.1){
-				var gene1 = randomize();
-				//pruneTwoNode = math.parse(mutationString);
-			}
-			if(math.random()<0.1){
+			
+			/*if(math.random()<0.1){
 				var gene2 = randomize();
 				//pruneTwoNode = math.parse(mutationString);
-			}
+			}*/
 
 			var gene1Nodes = [];
 			var gene2Nodes = [];
@@ -247,7 +244,10 @@ var regresion = function(properties){
 				}
 				pruneTwoCount++;
 			});
-			
+			if(math.random()<0.1){
+				var mutationString = randomize();
+				pruneTwoNode = math.parse(mutationString);
+			}
 			if(pruneOneParent!== null){
 				eval('pruneOneParent.' + pruneOnePath + '=pruneTwoNode;');
 			}else{
