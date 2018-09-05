@@ -46,7 +46,7 @@ function geneticAlgorithm(properties){
 					case "fillingInitialSetup":
 						var possibleGene = randomize();
 						tryPushGene(newGenes, {gene:possibleGene});	
-						if(newGenes.length != 0 && newGenes[0].fitness ==0){
+						if(finishCriteriaTest(newGenes, currentGeneration)){
 							finishCriteriaFoundCallback(newGenes[0], currentGeneration);
 							return;
 						}

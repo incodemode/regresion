@@ -49,7 +49,7 @@ var regresion = function(properties){
 	var lastSumFitness = null;
 	var lastGenerationFitnessSumChanged = null;
 	function finishCriteriaTest2(genes, currentGeneration){
-		if(genes[0].fitness ==0){
+		if(genes.length != 0  && genes[0].fitness ==0){
 			return true;
 		}
 		if(genes.length != populationCount){
@@ -126,12 +126,12 @@ var regresion = function(properties){
 				break;
 			case "int":
 
-				var genes = math.floor(random_powerlaw(0.0000001,Number.MAX_VALUE));
+				var genes = Math.floor(random_powerlaw(1,Number.MAX_VALUE)-1);
 				break;
 			case "pi":
 			case "e":
 
-				var genes = math.eval(operator);
+				var genes = operator;
 				break;
 			case "var":
 				var variableIndex = Math.floor(Math.random() * variableNames.length); // from 0 to latest character
@@ -144,7 +144,9 @@ var regresion = function(properties){
 				var genes = "1";
 				break;
 		}
-		
+		if(genes===""){
+			alert("empty genes with " + operator + " = " + genes);
+		}
 		return genes;
 		
 	}
@@ -185,8 +187,12 @@ var regresion = function(properties){
 				'1^n1 -> 1',
 				]);
 				//code = math.rationalize(math.simplify(code, simplifyExtraRules)).toString();
-				//code = math.rationalize(code).toString();
-				code = math.simplify(code, simplifyExtraRules).toString();
+				code = math.simplify(code, simplifyExtraRules, {exactFractions: false}).toString();
+				/*try{
+					code = math.rationalize(code).toString();
+				}catch(err){
+
+				}*/
 				if(code == null || code == 'undefined' || code == 'Infinity'){
 					return false;
 				}

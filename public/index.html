@@ -707,6 +707,12 @@
 			$('#accordion').on('hidden.bs.collapse', function(evt) {
 				$(evt.target).closest(".card").find(".fa-chevron-circle-right").removeClass("fa-chevron-circle-right").addClass("fa-chevron-circle-down");
 			});
+			$(document).on("click", "#closeFunctionVisor", function(evt){
+				$("#functionVisor").hide();
+				$('html, body').animate({
+	                    scrollTop: $("#chartHolder").offset().top
+	                }, 400);
+			});
 		});
 	</script>
 </head>
@@ -883,6 +889,7 @@
 				<div class="card">
 					<div class="card-header">
     					Visor de Función
+    					<button type="button" id="closeFunctionVisor" class="btn btn-sm float-right"><span class="fas fa-times"></span></button>
   					</div>
   
 					<div class="card-body">
