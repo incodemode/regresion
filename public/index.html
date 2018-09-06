@@ -156,6 +156,11 @@
 				//config.data.datasets[0].data[config.data.datasets[0].data.length] = minFitness;
 				//$(".collapse.show").not("#"+collapseId).collapse('hide');
 
+				$("#accordion .card").each(function(index){
+					if(index > 100){
+						$(this).remove();
+					}
+				});
 			}
 			newGeneFoundCallback = function(geneObject){
 				if(minFitness == null || geneObject.fitness < minFitness){
@@ -170,6 +175,7 @@
 				}
 				var $row = $table.find("tbody tr").first().clone();
 				$row.find("[data-gene]").text(geneObject.gene);
+				$row.find("[data-generation]").text(geneObject.generation);
 				$row.find("[data-fitness]").text(geneObject.fitness/*.toFixed(4).replace(/[.,]0*$/, "")*/);
 				
 
@@ -462,7 +468,7 @@
 				var geneText = $(this).closest('tr').find('[data-gene]').text();
 				var numberText = $(this).closest('tr').find('[data-number]').text();
 				var fitnessText = $(this).closest('tr').find('[data-fitness]').text();
-				var generationText = $(this).closest('.card').attr('data-generation');
+				var generationText = $(this).closest('tr').find('[data-generation]').text();
 
 				for(var i in independentVariables){
 					var independentVariable = independentVariables[i];
@@ -954,6 +960,7 @@
 				  <thead>
 				    <tr>
 				      <th scope="col" class="d-none d-xl-table-cell">#</th>
+				      <th scope="col" class="d-none">Generación</th>
 				      <th scope="col">Ecuación</th>
 				      <th scope="col" class="d-none d-xl-table-cell">Fitness</th>
 				      <th scope="col">Ver </th>
@@ -962,6 +969,7 @@
 				  <tbody>
 				    <tr style="display:none">
 				      <th class="d-none d-xl-table-cell" data-number scope="row">1</th>
+				      <td class="d-none" data-generation>1</td>
 				      <td data-gene style="word-wrap: break-word;">[equation]</td>
 				      <td class="d-none d-xl-table-cell" data-fitness>[fitness]</td>
 				      <td><button type="button" class="btn btn-small" data-view> <span class="fas fa-eye"> </span> </button></td>

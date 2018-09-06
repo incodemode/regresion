@@ -45,7 +45,7 @@ function geneticAlgorithm(properties){
 				switch(status){
 					case "fillingInitialSetup":
 						var possibleGene = randomize();
-						tryPushGene(newGenes, {gene:possibleGene});	
+						tryPushGene(newGenes, {gene:possibleGene,generation:currentGeneration});	
 						if(finishCriteriaTest(newGenes, currentGeneration)){
 							finishCriteriaFoundCallback(newGenes[0], currentGeneration);
 							return;
@@ -80,7 +80,7 @@ function geneticAlgorithm(properties){
 							var gene1 = selectParent(genes);
 							var gene2 = selectParent(genes);
 							var gene3 = crossover(gene1.gene, gene2.gene);
-							tryPushGene(newGenes, {gene:gene3});
+							tryPushGene(newGenes, {gene:gene3,generation:currentGeneration});
 							
 							if(finishCriteriaTest(newGenes, currentGeneration)){
 								finishCriteriaFoundCallback(newGenes[0], currentGeneration);

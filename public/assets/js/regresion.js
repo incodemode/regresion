@@ -131,6 +131,7 @@ var regresion = function(properties){
 			case "pi":
 			case "e":
 
+				//var genes = math.eval(operator);
 				var genes = operator;
 				break;
 			case "var":
@@ -185,6 +186,12 @@ var regresion = function(properties){
 				'cos(acos(n1)) -> n1',
 				'sin(asin(n1)) -> n1',
 				'1^n1 -> 1',
+				'0^0 -> 1',
+				'0^n1 -> 0',
+				'log(1,n1) -> 0',
+				'sin(pi) -> 0',
+				'cos(pi) -> -1',
+				'sqrt(n1)^2 -> n1'
 				]);
 				//code = math.rationalize(math.simplify(code, simplifyExtraRules)).toString();
 				code = math.simplify(code, simplifyExtraRules, {exactFractions: false}).toString();
@@ -204,7 +211,7 @@ var regresion = function(properties){
 				return false;
 			}
 			
-			return {gene:code,fitness:fitnessValue};
+			return {generation: geneObject.generation,gene:code,fitness:fitnessValue};
 	};
 	var equals = function(gene1, gene2){
 		var equal = math.parse(gene1).equals(gene2);

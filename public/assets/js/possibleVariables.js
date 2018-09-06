@@ -6,6 +6,14 @@
 		1:{x0:2, y:7},
 		2:{x0:3, y:12},
 	};
+	var sqrtVariables = [[],[],[]];
+	for(var i =0;i<20;i++){
+		for(var j = 0;j<20;j++){
+			sqrtVariables[0].push(i);
+			sqrtVariables[1].push(j);
+			sqrtVariables[2].push(Math.sqrt(Math.pow(i,2)+Math.pow(j,2)));
+		}
+	}
 	possibleVariables = [
 		{
 			name: 'y=x<sub>0</sub><sup>2</sup>',
@@ -50,11 +58,11 @@
 		{
 			name: 'y=(x<sub>0</sub><sup>2</sup>+x<sub>1</sub><sup>2</sup>)<sup>0.5</sup>',
 			description: 'circulo',
-			variables: [
+			variables: sqrtVariables/*[
 				[1,1,2,2,4,3,5,8,6,10],
 				[1,2,1,2,3,4,5,6,8,10],
 				["sqrt(2)","sqrt(5)","sqrt(5)","sqrt(8)",5,5,"sqrt(50)",10,10,"sqrt(200)"]
-			]
+			]*/
 		},
 		{
 			name: 'Precio de bitcoin de 2017',
@@ -65,6 +73,7 @@
 		}
 	
 	];
+
 	function transformToRunsSet(variables){
 		runsSet = {};
 		for(var i = 0; i < variables[0].length;i++){
