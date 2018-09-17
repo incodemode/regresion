@@ -668,7 +668,7 @@
 					$functionVisor.find("[data-gene]").text('$$y = ' + latex.replace(/\.([0-9]{2})[0-9]*/g,'.$1')+ '$$');
 					//$functionVisor.find("[data-gene]").text('$$y = ' + latex+ '$$');
 
-					$functionVisor.find("[data-number]").text(numberText);
+					$functionVisor.find("#functionSummary").find("[data-number]").text(numberText);
 					$functionVisor.find("[data-generation]").text(generationText);
 					$functionVisor.find("[data-fitness]").text(fitnessText);
 					$functionVisor.find("[data-lt]").text("$y=" + latex+ "$");
@@ -905,7 +905,7 @@
     						<div class="d-block d-sm-none" style="overflow:auto;font-size:60%;"
     							data-gene>Función</div>
     					</h4>
-						<div class="row  align-items-center">
+						<div id="functionSummary" class="row  align-items-center">
 							<div class="col col-lg-2"><strong>Generación:</strong></div>
 							<div class="col col-lg-1" data-generation></div>
 							<div class="w-100 d-lg-none"></div>
