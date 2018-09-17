@@ -10,7 +10,7 @@ var regresion = function(properties){
 	
 	var lastGenesUsed = null;
 	var totalReverseFitness = null;
-	var elitistParentSelector = function(genes){
+	var elitistParentSelector = function(genes, newGenes){
 		
 		var maxFitness = genes[genes.length-1].fitness;
 		
@@ -19,6 +19,7 @@ var regresion = function(properties){
 			for(var i = 0; i<genes.length; i++){
 				totalReverseFitness += 1.2 - (genes[i].fitness/maxFitness);
 			}
+			lastGenesUsed = genes;
 		}
 		
 		var selector = Math.random()*totalReverseFitness;
@@ -32,6 +33,237 @@ var regresion = function(properties){
 		
 		return genes[genes.length-1];
 	};
+	var clusterizedGenes = [];
+	var newClusterizedGenes = [];
+	var previousNewGeneslength = 0;
+	var lastDGCAGenesUsed = [];
+	var clusterSize = 4;
+	var DGCAParentSelector = function(genes, newGenes){
+		var maxFitness = genes[genes.length-1].fitness;
+		
+		if(lastDGCAGenesUsed != genes){
+			lastDGCAGenesUsed = genes;
+			incodemode.math.clearLevenshteinCache();
+			
+			var initialNodeValues = [{clusters:[], spare:[]}];
+			for(var i=0;i<clusterSize;i++){
+				initialNodeValues[0].clusters.push([]);
+			}
+
+			for(var i in genes){
+				initialNodeValues[0].spare.push(i);
+			}
+
+			var initialSize = 0;
+			for(var i in genes){
+				var clusterizedFunction = genes[i].gene;
+				for(var j = parseInt(i)+1 ;j<genes.length;j++){
+					var clusterizedFunction2 = genes[j].gene;
+					initialSize += incodemode.math.levenshtein(clusterizedFunction,clusterizedFunction2);
+				}
+			}
+			var dFunction = function(node){
+				var currentSize = 0;
+				for(var i in node.spare){
+					var clusterizedFunction = genes[node.spare[i]].gene;
+					for(var j = parseInt(i)+1 ;j<node.spare.length;j++){
+						var clusterizedFunction2 = genes[node.spare[j]].gene;
+						currentSize += incodemode.math.levenshtein(clusterizedFunction,clusterizedFunction2);
+					}
+				}
+				return initialSize-currentSize;
+			}
+			var maxClusterLength = Math.floor((genes.length)/clusterSize);
+			//var clusters = incodemode.ai.aStarRelaxed(initialSize/5,initialSize,dFunction,initialNodeValues, 
+			var clusters = incodemode.ai.aStar(initialNodeValues, 
+				function(inNode){
+					var node = $.extend(true, {}, inNode);
+					var newNodes = [];
+					if(node.spare.length!=0){
+
+						
+							var spareRemoved = node.spare[0];
+							node.spare.splice(0,1);
+							var filledFirstPad = 0;
+							for(var i in node.clusters){
+								if(node.clusters[i].length<maxClusterLength){
+									filledFirstPad = 1;
+								}
+							}
+							for(var i in node.clusters){
+								if(node.clusters[i].length<=maxClusterLength-filledFirstPad){
+									var newNode = $.extend(true, {}, node);
+									incodemode.array.insertOrdered(newNode.clusters[i],spareRemoved,function(a,b){return a>=b;});
+									//newNode.clusters[i].push(spareRemoved);
+									newNodes.push(newNode);
+									if(newNode.clusters[i].length == 1){
+										break;
+									}
+								}
+							}
+							return newNodes;
+						
+					}
+					return newNodes;
+				}, function(node){
+					/*var totalFitness = 0;
+					for(var i in node.clusters){
+						for(var j in node.clusters[i]){
+							var clusterizedFunction = genes[node.clusters[i][j]].gene;
+							for(var k=parseInt(j)+1;k<node.clusters[i].length;k++){
+								var clusterizedFunction2 = genes[node.clusters[i][k]].gene;
+								totalFitness += incodemode.math.levenshtein(clusterizedFunction,clusterizedFunction2);
+							}
+						}
+						if(node.clusters[i].length==1){
+							totalFitness=totalFitness+1;
+						}
+					}*/
+					var totalAdvantage = 0;
+					for(var i in node.clusters){
+						for(var k in node.clusters[i]){
+							var clusterizedFunction = genes[node.clusters[i][k]].gene;
+							for(var j = i +1; j < node.clusters.length ; j++){
+								if(j!=i){
+									for(var l in node.clusters[j]){
+										var clusterizedFunction2 = genes[node.clusters[j][l]].gene;
+										totalAdvantage += incodemode.math.levenshtein(clusterizedFunction,clusterizedFunction2);
+									}
+								}
+							}
+						}
+					}
+					return initialSize - totalAdvantage;
+					//return totalFitness-totalAdvantage;
+					//return totalFitness;
+				}, function(node){
+					/*return 0;
+					return node.spare.length;*/
+					var sumMinSpareDistances = 0;
+					//por cada uno de los spares
+					for(var j in node.spare){
+						var clusterizedFunction = genes[node.spare[j]].gene;
+						minSpareDistance = null;
+						//obtengo el minimo necesario para incluir el spare en un cluster
+						for(var i in node.clusters){
+							if(node.clusters[i].length<maxClusterLength){
+								var distanceSum = 0;
+								for(var k in node.clusters[i]){
+
+									var clusterizedFunction2 = genes[node.clusters[i][k]].gene;
+									
+									//totalAdvantage += ;
+									distanceSum += incodemode.math.levenshtein(clusterizedFunction,clusterizedFunction2);
+									
+								}
+								if(minSpareDistance == null){
+									minSpareDistance = distanceSum;
+								}else{
+									minSpareDistance = Math.min(minSpareDistance, distanceSum);
+								}
+							}
+						}
+						if(minSpareDistance == null){
+							minSpareDistance = 0;
+						}
+						sumMinSpareDistances+=minSpareDistance;
+					}
+					//obtengo la mayor distancia entre dos de los spare
+					/*maxSpareDistance = 0;
+					for(var i in node.spare){
+
+						var clusterizedFunction = genes[node.spare[i]].gene;
+						for(var j=i; j<node.spare.length;j++){
+							var clusterizedFunction2 = genes[node.spare[j]].gene;
+							var distance = incodemode.math.levenshtein(clusterizedFunction,clusterizedFunction2);
+							maxSpareDistance = Math.max(maxSpareDistance, distance);
+						}
+					}*/
+					/*var totalAdvantage2 = 0;
+					for(var i in node.spare){
+						var clusterizedFunction = genes[node.spare[i]].gene;
+						for(var j = parseInt(i)+1; j<node.spare.length;j++){
+						
+							
+							var clusterizedFunction2 = genes[node.spare[j]].gene;
+							totalAdvantage2 += incodemode.math.levenshtein(clusterizedFunction,clusterizedFunction2);
+							
+						}
+						
+					}*/
+					/*totalAdvantage = (node.spare.length/genes.length)*totalAdvantage*0.8 + (1-(node.spare.length/genes.length))*totalAdvantage2*0.2;*/
+					/*var totalAdvantage = 0;
+					var medoidsLength = node.medoids.length;
+					for(var i = 0; i<medoidsLength;i++){
+						var firstMedoidFunction = genes[node.medoids[i]].gene;
+						for(var j=i+1; j<medoidsLength;j++){
+							var secondMedoidFunction = genes[node.medoids[j]].gene;
+							totalAdvantage += incodemode.math.levenshtein(firstMedoidFunction,secondMedoidFunction);
+						}
+					}*/
+					return /*node.spare.length - totalAdvantage + */sumMinSpareDistances;// + maxSpareDistance;// + node.medoids.length-totalAdvantage;
+				}, function(node){
+					if(node.spare.length == 0){
+						return true;
+					}
+					return false;
+				});
+			newGenes.splice(0,newGenes.length);
+			clusterizedGenes = [];
+			newClusterizedGenes = [];
+			for(var i in clusters.clusters){
+				//clusters.medoids[i] = genes[clusters.medoids[i]].gene;
+				clusterizedGenes[i] = [];
+				newClusterizedGenes[i] = [];
+				for(var j in clusters.clusters[i]){
+					var genesObj = genes[clusters.clusters[i][j]];
+					incodemode.array.insertOrdered(clusterizedGenes[i],genesObj, function(a,b){
+						return a.fitness>=b.fitness;
+					});
+				}
+			}
+			//console.log(JSON.parse(JSON.stringify(clusterizedGenes)));
+			for(var i in clusterizedGenes){
+				for(var j in clusterizedGenes[i]){
+					if(j<Math.floor(clusterizedGenes[i].length/2)){
+						var genesObj = clusterizedGenes[i][j];
+						newClusterizedGenes[i].push(genesObj);
+						incodemode.array.insertOrdered(newGenes,genesObj, function(a,b){
+							return a.fitness>=b.fitness;
+						});
+						for(var k in newGenes){
+							newGenes[k].number = parseInt(k) +1;
+						}
+						newGeneFoundCallback(genesObj);
+					}
+				}
+			}
+			previousNewGeneslength = newGenes.length;
+		}
+		if(previousNewGeneslength != newGenes.length){
+			var inserted = false;
+			for(var i in clusterizedGenes){
+				
+				if(!inserted && clusterizedGenes[i].length!=newClusterizedGenes[i].length){
+					newClusterizedGenes.push("m"); //m for Marker
+					inserted = true;
+				}
+				
+			}
+
+			previousNewGeneslength = newGenes.length;
+
+		}
+		
+		for(var i in clusterizedGenes){
+			for(var j in clusterizedGenes[i]){
+				if(clusterizedGenes[i].length != newClusterizedGenes[i].length){
+					return elitistParentSelector(clusterizedGenes[i],[]);
+				}
+			}
+		}
+	};
+
 	var lastGenerationFitnessChange = 0;
 	var lastFitness = null;
 	function finishCriteriaTest(genes, currentGeneration){
@@ -39,7 +271,7 @@ var regresion = function(properties){
 			lastFitness = newGenes[0].fitness;
 			lastGenerationFitnessChange = currentGeneration;
 		}
-		if(currentGeneration - lastGenerationFitnessChange > 99){
+		if(currentGeneration - lastGenerationFitnessChange > 999){
 			
 			return true;;
 		}
@@ -62,10 +294,12 @@ var regresion = function(properties){
 			for(var i = 0;i<5;i++){
 				newLastSumFitness = newLastSumFitness + genes[i].fitness;
 			}
-			if(lastSumFitness != newLastSumFitness){
+			//newLastSumFitness = genes[0].fitness;
+			
+			if(lastSumFitness == null || lastSumFitness > newLastSumFitness){
 				lastSumFitness = newLastSumFitness;
 				lastGenerationFitnessSumChanged = currentGeneration;
-			}else if(currentGeneration-lastGenerationFitnessSumChanged > 99){
+			}else if(currentGeneration-lastGenerationFitnessSumChanged > 999){
 				return true;
 			}
 			return false;
@@ -77,7 +311,7 @@ var regresion = function(properties){
 	};
 	var randomize = function(limit){
 		if(limit == undefined){
-			limit = 2;
+			limit = Math.floor(Math.random()*3);
 		}
 		var possibleNodes;
 		if(limit <= 0){
@@ -126,13 +360,13 @@ var regresion = function(properties){
 				break;
 			case "int":
 
-				var genes = Math.floor(random_powerlaw(1,Number.MAX_VALUE)-1);
+				var genes = Math.floor(random_powerlaw(1,10000)-1);
 				break;
 			case "pi":
 			case "e":
 
-				//var genes = math.eval(operator);
-				var genes = operator;
+				var genes = math.eval(operator);
+				//var genes = operator;
 				break;
 			case "var":
 				var variableIndex = Math.floor(Math.random() * variableNames.length); // from 0 to latest character
@@ -183,8 +417,11 @@ var regresion = function(properties){
 			try{
 				var simplifyExtraRules = math.simplify.rules.concat([
 				'tan(atan(n1)) -> n1',
+				'atan(tan(n1)) -> n1',
 				'cos(acos(n1)) -> n1',
+				'acos(cos(n1)) -> n1',
 				'sin(asin(n1)) -> n1',
+				'asin(sin(n1)) -> n1',
 				'1^n1 -> 1',
 				'0^0 -> 1',
 				'0^n1 -> 0',
@@ -257,7 +494,7 @@ var regresion = function(properties){
 				}
 				pruneTwoCount++;
 			});
-			if(math.random()<0.1){
+			if(math.random()<0.8){
 				var mutationString = randomize();
 				pruneTwoNode = math.parse(mutationString);
 			}
@@ -293,7 +530,7 @@ var regresion = function(properties){
 			populationCount:populationCount,
 			fitnessFunction: fitnessFunction,
 			crossover: crossover,
-			selectParent: elitistParentSelector,
+			selectParent: DGCAParentSelector,
 			finishCriteriaTest: finishCriteriaTest2,
 			newGenerationStartedCallback:newGenerationStartedCallback,
 			newGeneFoundCallback:newGeneFoundCallback,

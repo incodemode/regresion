@@ -1,4 +1,6 @@
 genesUsed = [];
+newGenes = [];
+tryPushGene = function(){};
 function geneticAlgorithm(properties){
 
 	var validator = properties.validator;
@@ -30,7 +32,7 @@ function geneticAlgorithm(properties){
 	
 	this.execute = function(){
 		var genes = [];
-		var newGenes = [];
+		newGenes = [];
 		var occupied = false;
 		var occupiedGeneration = false;
 		var intervalGenerations;
@@ -56,8 +58,8 @@ function geneticAlgorithm(properties){
 						break;
 					case "fillingGenerations":
 						if(currentGeneration>generationsCount){
-							//finishCriteriaFoundCallback(newGenes[0], currentGeneration);
-							//return;
+							finishCriteriaFoundCallback(newGenes[0], currentGeneration);
+							return;
 							//clearInterval(interval);
 						}else if(newGenes.length >= populationCount){
 
@@ -71,14 +73,17 @@ function geneticAlgorithm(properties){
 							
 							newGenerationStartedCallback(currentGeneration+1, genes);
 							currentGeneration++;
-							for(var i in newGenes){
+							/*for(var i in newGenes){
 
 								newGeneFoundCallback(newGenes[i]);
-							}
+							}*/
 							
 						}else{
-							var gene1 = selectParent(genes);
-							var gene2 = selectParent(genes);
+							
+							
+							var gene1 = selectParent(genes, newGenes);
+							
+							var gene2 = selectParent(genes, newGenes);
 							var gene3 = crossover(gene1.gene, gene2.gene);
 							tryPushGene(newGenes, {gene:gene3,generation:currentGeneration});
 							
@@ -101,7 +106,7 @@ function geneticAlgorithm(properties){
 	
 	}
 
-	function tryPushGene(genes, geneObject){
+	tryPushGene = function(genes, geneObject){
 		
 			
 		var geneObject = validator(geneObject);

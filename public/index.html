@@ -2,13 +2,15 @@
 <html lang="en">
 <head>
 	<!-- Global site tag (gtag.js) - Google Analytics -->
-	<script async src="https://www.googletagmanager.com/gtag/js?id=UA-125104275-1"></script>
+	<!--script async src="https://www.googletagmanager.com/gtag/js?id=UA-125104275-1"></script-->
 	<script>
-	  window.dataLayer = window.dataLayer || [];
-	  function gtag(){dataLayer.push(arguments);}
-	  gtag('js', new Date());
+		if(window.origin != "null"){
+		  window.dataLayer = window.dataLayer || [];
+		  function gtag(){dataLayer.push(arguments);}
+		  gtag('js', new Date());
 
-	  gtag('config', 'UA-125104275-1');
+		  gtag('config', 'UA-125104275-1');
+		}
 	</script>
 
 	<title> Funciones de Regresión por Medio de Algoritmos Genéticos</title>
@@ -32,6 +34,10 @@
 	<script src="assets/bootstrap/js/bootstrap.min.js"></script>
 	<script src="assets/js/bootstrap.operamini.fix.js"></script>
 	<script src="assets/js/DOM.isOverflown.js"></script>
+	<script src="assets/js/incodemode.math.levenshtein.js"></script>
+	<script src="assets/js/incodemode.array.insertOrdered.js"></script>
+	<script src="assets/js/incodemode.ai.aStar.js"></script>
+	<script src="assets/js/incodemode.ai.aStarRelaxed.js"></script>
 	
 	<!--script>
 		window.MathJax = {
@@ -440,7 +446,7 @@
 				}
 				
 				var r = regresion({
-					populationCount: 100,
+					populationCount: 120,
 					generationsCount: 10000,
 					variablesRunsSet:variablesRunsSet,
 					newGenerationStartedCallback:newGenerationStartedCallback,
@@ -668,7 +674,7 @@
 					$functionVisor.find("[data-gene]").text('$$y = ' + latex.replace(/\.([0-9]{2})[0-9]*/g,'.$1')+ '$$');
 					//$functionVisor.find("[data-gene]").text('$$y = ' + latex+ '$$');
 
-					$functionVisor.find("[data-number]").text(numberText);
+					$functionVisor.find("#summary [data-number]").text(numberText);
 					$functionVisor.find("[data-generation]").text(generationText);
 					$functionVisor.find("[data-fitness]").text(fitnessText);
 					$functionVisor.find("[data-lt]").text("$y=" + latex+ "$");
@@ -905,7 +911,7 @@
     						<div class="d-block d-sm-none" style="overflow:auto;font-size:60%;"
     							data-gene>Función</div>
     					</h4>
-						<div class="row  align-items-center">
+						<div class="row  align-items-center" id="summary">
 							<div class="col col-lg-2"><strong>Generación:</strong></div>
 							<div class="col col-lg-1" data-generation></div>
 							<div class="w-100 d-lg-none"></div>
