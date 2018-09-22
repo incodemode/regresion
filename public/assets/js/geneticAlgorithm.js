@@ -38,7 +38,7 @@ function geneticAlgorithm(properties){
 		var status = "fillingInitialSetup";
 		var oneThird;
 		var working = false;
-		
+		var currentPopulationCount = populationCount;
 
 			function iterable(){
 				
@@ -50,26 +50,27 @@ function geneticAlgorithm(properties){
 							finishCriteriaFoundCallback(newGenes[0], currentGeneration);
 							return;
 						}
-						if(newGenes.length>=populationCount){
+						if(newGenes.length>=currentPopulationCount){
 							status = "fillingGenerations";
 						}
 						break;
 					case "fillingGenerations":
 						if(currentGeneration>generationsCount){
-							//finishCriteriaFoundCallback(newGenes[0], currentGeneration);
-							//return;
-							//clearInterval(interval);
-						}else if(newGenes.length >= populationCount){
+							finishCriteriaFoundCallback(newGenes[0], currentGeneration);
+							return;
+							
+						}else if(newGenes.length >= currentPopulationCount){
 
-							oneThird = Math.floor(populationCount/2);
+							oneThird = Math.floor((currentPopulationCount)/2);
 							genes = JSON.parse(JSON.stringify(newGenes));
-							newGenes.splice(oneThird,populationCount-oneThird);
+							newGenes.splice(oneThird,currentPopulationCount-oneThird);
 							if(finishCriteriaTest(genes, currentGeneration)){
 								finishCriteriaFoundCallback(newGenes[0], currentGeneration);
 								return;
 							}
 							
 							newGenerationStartedCallback(currentGeneration+1, genes);
+							currentPopulationCount = populationCount + Math.floor(Math.log(currentGeneration+1)*20);
 							currentGeneration++;
 							for(var i in newGenes){
 

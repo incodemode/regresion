@@ -23,7 +23,7 @@
 	
 		<script>
 			$(function(){
-				currentExample = 0;
+				currentExample = 2;
 				currentTestNumberForExample = 0;
 				$currentTable = $('table');
 				function logit(){
@@ -32,6 +32,7 @@
 				function finishCriteriaFoundCallback(geneObject, currentGeneration){
 
 					var $tr = $("<tr>");
+					$tr.append($("<td>").html(currentTestNumberForExample));
 					$tr.append($("<td>").html(possibleVariables[currentExample].name));
 					$tr.append($("<td>").text(geneObject.gene));
 					$tr.append($("<td>").text(geneObject.fitness));
@@ -53,7 +54,7 @@
 					var variablesRunsSet = transformToRunsSet(possibleVariables[currentExample].variables);
 					logit("variablesRunsSet",variablesRunsSet);
 					var r = regresion({
-						populationCount: 100,
+						populationCount: 10,
 						generationsCount: 10000,
 						variablesRunsSet:variablesRunsSet,
 						newGenerationStartedCallback:function(generation){logit('newGenerationStarted: ', generation);
@@ -91,8 +92,9 @@
 			<div class="row">
 				<table class="table">
 					<tr>
+						<th>run</th>
 						<th>example</th>
-						<th>gen</th>
+						<th>genes</th>
 						<th>fitness</th>
 						<th>generation</th>
 					</tr>

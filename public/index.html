@@ -187,7 +187,11 @@
 				});
 				
 				$row.show(400);
+				if($rows.length>150){
+					$rows.last().remove();
+				}
 				
+				if($rows)
 				var lastData = config.data.datasets[0].data[config.data.datasets[0].data.length-1];
 				if(lastData !== undefined){
 					if(lastData.x == generationCount){

@@ -52,10 +52,10 @@ var regresion = function(properties){
 		if(genes.length != 0  && genes[0].fitness ==0){
 			return true;
 		}
-		if(genes.length != populationCount){
+		if(genes.length < populationCount){
 			return false;
 		}
-		if(genesFromFinishCriteria == null || genesFromFinishCriteria != genes){
+		//if(genesFromFinishCriteria == null || genesFromFinishCriteria != genes){
 			var newLastSumFitness = 0;
 			genesFromFinishCriteria = genes;
 			//genesUnderScope = JSON.parse(JSON.stringify(genes)).splice(5,genes.length);
@@ -69,7 +69,7 @@ var regresion = function(properties){
 				return true;
 			}
 			return false;
-		}
+		//}
 		
 	}
 	function random_powerlaw(mini, maxi) {
@@ -81,9 +81,9 @@ var regresion = function(properties){
 		}
 		var possibleNodes;
 		if(limit <= 0){
-			possibleNodes = ["int","number", "pi", "e", "var", "zero", "one"];
+			possibleNodes = ["int"/*,"number"*/, "pi", "e", "var", "zero", "one"];
 		}else{
-			possibleNodes = ["+","-","*","/","^","sqrt","log", "par", "sin", "cos", "tan", "asin", "acos", "atan", "int", "number", "pi", "e", "var", "zero", "one"];
+			possibleNodes = ["+","-","*","/","^","sqrt","log", "par", "sin", "cos", "tan", "asin", "acos", "atan", "int", /*"number",*/ "pi", "e", "var", "zero", "one"];
 		}
 		var type = Math.floor(Math.random() * possibleNodes.length); // from 0 to latest character
 		var genes = "";
@@ -131,8 +131,8 @@ var regresion = function(properties){
 			case "pi":
 			case "e":
 
-				//var genes = math.eval(operator);
-				var genes = operator;
+				var genes = math.eval(operator);
+				//var genes = operator;
 				break;
 			case "var":
 				var variableIndex = Math.floor(Math.random() * variableNames.length); // from 0 to latest character
@@ -160,13 +160,13 @@ var regresion = function(properties){
 				var variablesRun = variablesRunsSet[variablesRunIndex];
 				var realY = variablesRun.y;
 			    var temp = mathObj.eval(variablesRun);
-			    var difference = Math.pow(temp-realY,2);
-			    totalDifference+=difference;	
+			    totalDifference = math.eval("d+pow(t-y,2)",{d:totalDifference,t:temp,y:realY});
+			    
 			}
 		} catch (e) {
 		    return false;
 		}
-		return totalDifference;
+		return math.eval("sqrt(d)",{d:totalDifference});
 	}
 	var validator = function(geneObject){
 		var code = geneObject.gene;
@@ -183,15 +183,19 @@ var regresion = function(properties){
 			try{
 				var simplifyExtraRules = math.simplify.rules.concat([
 				'tan(atan(n1)) -> n1',
+				'atan(tan(n1)) -> n1',
 				'cos(acos(n1)) -> n1',
+				'acos(cos(n1)) -> n1',
 				'sin(asin(n1)) -> n1',
+				'asin(sin(n1)) -> n1',
 				'1^n1 -> 1',
 				'0^0 -> 1',
 				'0^n1 -> 0',
 				'log(1,n1) -> 0',
 				'sin(pi) -> 0',
 				'cos(pi) -> -1',
-				'sqrt(n1)^2 -> n1'
+				'sqrt(n1)^2 -> n1',
+				'sqrt(n1^2) -> n1'
 				]);
 				//code = math.rationalize(math.simplify(code, simplifyExtraRules)).toString();
 				code = math.simplify(code, simplifyExtraRules, {exactFractions: false}).toString();
@@ -217,6 +221,24 @@ var regresion = function(properties){
 		var equal = math.parse(gene1).equals(gene2);
 		return equal;
 	};
+	var difference = function(gene1, gene2){
+		var totalDifference = 0;
+		try {
+			var mathObj1 = math.parse(gene1);
+			var mathObj2 = math.parse(gene2);
+			for(variablesRunIndex in variablesRunsSet){
+				var variablesRun = variablesRunsSet[variablesRunIndex];
+				
+			    var temp1 = mathObj1.eval(variablesRun);
+			    var temp2 = mathObj2.eval(variablesRun);
+			    var difference = math.eval("pow(t1-t2,2)",{t1:temp1,t2:temp2});
+			    totalDifference=math.eval("d+t",{d:difference,t:totalDifference});	
+			}
+		} catch (e) {
+		    return false;
+		}
+		return math.eval("sqrt(t)",{t:totalDifference});
+	}
 	var crossover = function(gene1, gene2){
 		try{
 			
@@ -257,10 +279,7 @@ var regresion = function(properties){
 				}
 				pruneTwoCount++;
 			});
-			if(math.random()<0.1){
-				var mutationString = randomize();
-				pruneTwoNode = math.parse(mutationString);
-			}
+
 			if(pruneOneParent!== null){
 				eval('pruneOneParent.' + pruneOnePath + '=pruneTwoNode;');
 			}else{
@@ -270,6 +289,12 @@ var regresion = function(properties){
 			
 		
 			crossedString = crossedObject.toString();
+			var mutationness = math.eval("1/(log(x+1)+1)",{x:difference(gene1, gene2)} )*0.4+0.1;
+			//console.log(mutationness);
+			if(math.random()<mutationness){
+				var mutationString = randomize();
+				return crossover(crossedString, mutationString);
+			}
 		}catch(err){
 			return null;
 		}
