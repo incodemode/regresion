@@ -7,11 +7,11 @@
 		2:{x0:3, y:12},
 	};
 	var sqrtVariables = [[],[],[]];
-	for(var i =0;i<20;i++){
-		for(var j = 0;j<20;j++){
-			sqrtVariables[0].push(i);
-			sqrtVariables[1].push(j);
-			sqrtVariables[2].push(Math.sqrt(Math.pow(i,2)+Math.pow(j,2)));
+	for(var i =0;i<5;i++){
+		for(var j = 0;j<5;j++){
+			sqrtVariables[0].push(i*3);
+			sqrtVariables[1].push(j*3);
+			sqrtVariables[2].push(Math.sqrt(Math.pow(i*3,2)+Math.pow(j*3,2)));
 		}
 	}
 	possibleVariables = [

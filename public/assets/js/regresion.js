@@ -126,7 +126,7 @@ var regresion = function(properties){
 				break;
 			case "int":
 
-				var genes = Math.floor(random_powerlaw(1,Number.MAX_VALUE)-1);
+				var genes = Math.floor(random_powerlaw(1,1000)-1);
 				break;
 			case "pi":
 			case "e":
@@ -166,11 +166,21 @@ var regresion = function(properties){
 		} catch (e) {
 		    return false;
 		}
-		return math.eval("sqrt(d)",{d:totalDifference});
+		var ret = math.eval("sqrt(d)",{d:totalDifference});
+		if(ret.im !== undefined){
+			if(ret.im == 0){
+				return ret.re;
+			}else{
+				return false;
+			}
+			
+		}
+		return ret;
 	}
 	var validator = function(geneObject){
 		var code = geneObject.gene;
-		if(code == null || code.length>50 || code == 'NaNi'){
+
+		if(code == null || code.length>1000 || code == 'NaNi'){
 			return false;
 		}
 			/*
@@ -181,6 +191,18 @@ var regresion = function(properties){
 				}
 			*/
 			try{
+				var totalNodes = 0;
+				if(geneObject.totalNodes !== undefined){
+					totalNodes = geneObject.totalNodes;
+				}else{
+					math.parse(code).traverse(function (node, path, parent){
+						totalNodes++;
+					});
+					geneObject.totalNodes = totalNodes;
+				}
+				if(totalNodes>15){
+					return false;
+				}
 				var simplifyExtraRules = math.simplify.rules.concat([
 				'tan(atan(n1)) -> n1',
 				'atan(tan(n1)) -> n1',
@@ -218,6 +240,14 @@ var regresion = function(properties){
 			return {generation: geneObject.generation,gene:code,fitness:fitnessValue};
 	};
 	var equals = function(gene1, gene2){
+		if(gene1.fitness == gene2.fitness){
+			if(gene2.gene.length<gene1.gene.length){
+				gene1 = gene2;
+			}
+			return true;
+		}else{
+			return false;
+		}
 		var equal = math.parse(gene1).equals(gene2);
 		return equal;
 	};

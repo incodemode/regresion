@@ -70,7 +70,8 @@ function geneticAlgorithm(properties){
 							}
 							
 							newGenerationStartedCallback(currentGeneration+1, genes);
-							currentPopulationCount = populationCount + Math.floor(Math.log(currentGeneration+1)*20);
+							currentPopulationCount = populationCount + Math.floor(Math.log(currentGeneration+1)*25);
+							//currentPopulationCount = populationCount + (1-(1/(math.log(currentGeneration+1)+1)))*150;//230
 							currentGeneration++;
 							for(var i in newGenes){
 
@@ -111,7 +112,7 @@ function geneticAlgorithm(properties){
 		}
 		for(var i in genes){
 			existentObject = genes[i];
-			if(equals(geneObject.gene, existentObject.gene)|| existentObject.gene == geneObject.gene){
+			if(equals(genes[i], geneObject)|| existentObject.gene == geneObject.gene){
 				return;
 			}
 		}

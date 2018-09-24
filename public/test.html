@@ -54,7 +54,7 @@
 					var variablesRunsSet = transformToRunsSet(possibleVariables[currentExample].variables);
 					logit("variablesRunsSet",variablesRunsSet);
 					var r = regresion({
-						populationCount: 10,
+						populationCount: 100,
 						generationsCount: 10000,
 						variablesRunsSet:variablesRunsSet,
 						newGenerationStartedCallback:function(generation){logit('newGenerationStarted: ', generation);
