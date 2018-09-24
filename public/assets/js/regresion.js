@@ -180,7 +180,7 @@ var regresion = function(properties){
 	var validator = function(geneObject){
 		var code = geneObject.gene;
 
-		if(code == null || code.length>1000 || code == 'NaNi'){
+		if(code == null || code.length>25 || code == 'NaNi'){
 			return false;
 		}
 			/*
@@ -191,7 +191,7 @@ var regresion = function(properties){
 				}
 			*/
 			try{
-				var totalNodes = 0;
+				/*var totalNodes = 0;
 				if(geneObject.totalNodes !== undefined){
 					totalNodes = geneObject.totalNodes;
 				}else{
@@ -200,9 +200,9 @@ var regresion = function(properties){
 					});
 					geneObject.totalNodes = totalNodes;
 				}
-				if(totalNodes>15){
+				if(totalNodes>20){
 					return false;
-				}
+				}*/
 				var simplifyExtraRules = math.simplify.rules.concat([
 				'tan(atan(n1)) -> n1',
 				'atan(tan(n1)) -> n1',
