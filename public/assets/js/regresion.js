@@ -17,14 +17,14 @@ var regresion = function(properties){
 		if(lastGenesUsed != genes){
 			totalReverseFitness = 0;
 			for(var i = 0; i<genes.length; i++){
-				totalReverseFitness += 1.2 - (genes[i].fitness/maxFitness);
+				totalReverseFitness += 1.3 - (genes[i].fitness/maxFitness);
 			}
 		}
 		
 		var selector = Math.random()*totalReverseFitness;
 		var currentReverseFitness = 0;
 		for(var i = 0;i<genes.length;i++){
-			currentReverseFitness += 1.2 - (genes[i].fitness/maxFitness);
+			currentReverseFitness += 1.3 - (genes[i].fitness/maxFitness);
 			if(currentReverseFitness > selector){
 				return genes[i];
 			}
@@ -59,13 +59,13 @@ var regresion = function(properties){
 			var newLastSumFitness = 0;
 			genesFromFinishCriteria = genes;
 			//genesUnderScope = JSON.parse(JSON.stringify(genes)).splice(5,genes.length);
-			for(var i = 0;i<5;i++){
+			for(var i = 0;i<10;i++){
 				newLastSumFitness = newLastSumFitness + genes[i].fitness;
 			}
 			if(lastSumFitness != newLastSumFitness){
 				lastSumFitness = newLastSumFitness;
 				lastGenerationFitnessSumChanged = currentGeneration;
-			}else if(currentGeneration-lastGenerationFitnessSumChanged > 99){
+			}else if(currentGeneration-lastGenerationFitnessSumChanged > 299){
 				return true;
 			}
 			return false;
@@ -80,10 +80,13 @@ var regresion = function(properties){
 			limit = 2;
 		}
 		var possibleNodes;
+		var weights;
 		if(limit <= 0){
-			possibleNodes = ["int"/*,"number"*/, "pi", "e", "var", "zero", "one"];
+			possibleNodes 	= 	["int"/*,"number","decimal"*/,"pi",	"e","var","zero","one"];
+			weights			=	[0.3  ,0.3     ,0.3      ,0.05,0.05,1    ,0.5   ,0.5  ];
 		}else{
-			possibleNodes = ["+","-","*","/","^","sqrt","log", "par", "sin", "cos", "tan", "asin", "acos", "atan", "int", /*"number",*/ "pi", "e", "var", "zero", "one"];
+			possibleNodes 	= 	["+","-","*","/","pow","sqrt","log", "par", "minus", "sin", "cos", "tan", "asin", "acos", "atan", "int"/*, "number", "decimal"*/, "pi", "e", "var", "zero", "one"];
+			weights			=	[1,  1,  1,  1,  1,  1,     1,     1,     1,       1,     1,     1,     1,      1,      1,      0.3,   0.3,      0.3,       0.05, 0.05,1,     0.5,    0.5  ];
 		}
 		var type = Math.floor(Math.random() * possibleNodes.length); // from 0 to latest character
 		var genes = "";
@@ -100,15 +103,25 @@ var regresion = function(properties){
 				genes = "("+op1+operator+op2+")";
 				break;
 			case "pow":
-			case "log":
-			//case "nthRoot":
 				var op1 = randomize(limit -1);
 				var op2 = randomize(limit -1);
 				genes = operator+"("+op1+","+op2+")";
+				//genes = operator+"("+op1+")";
+				break;
+			case "log":
+			//case "nthRoot":
+				var op1 = randomize(limit -1);
+				//var op2 = randomize(limit -1);
+				//genes = operator+"("+op1+","+op2+")";
+				genes = operator+"("+op1+")";
 				break;
 			case "par":
 				var op1 = randomize(limit -1);
 				genes = "(" + op1 + ")";
+				break;
+			case "minus":
+				var op1 = randomize(limit -1);
+				genes = "(0-(" + op1 + "))";
 				break;
 			case "sin":
 			case "cos":
@@ -122,11 +135,15 @@ var regresion = function(properties){
 				break; 
 			case "number":
 
-				var genes = random_powerlaw(0.0000001,Number.MAX_VALUE);
+				var genes = random_powerlaw(0.0000001,1001);
 				break;
 			case "int":
 
-				var genes = Math.floor(random_powerlaw(1,1000)-1);
+				var genes = Math.floor(random_powerlaw(1,1001)-1);
+				break;
+			case "decimal":
+
+				var genes = Math.random();
 				break;
 			case "pi":
 			case "e":
@@ -151,19 +168,69 @@ var regresion = function(properties){
 		return genes;
 		
 	}
-
+	var usedVariablesRunsSet = null;
+	var kernelVariablesRunsSet = [];
+	const gpu = new GPU();
 	var fitnessFunction = function(gene){
-		var totalDifference = 0;
+		if(useGPU!== undefined && useGPU){
+			if(usedVariablesRunsSet != variablesRunsSet){
+				kernelVariablesRunsSet = [];
+				for(var i in variablesRunsSet){
+					kernelVariablesRunsSet[i] = [];
+					var k = 0;
+					for(var j in variablesRunsSet[i]){
+						kernelVariablesRunsSet[i][k] = variablesRunsSet[i][j];
+						k++;
+					}
+				}
+				usedVariablesRunsSet = variablesRunsSet;
+			}
+			
+			
+				
+				
+			innerKernelFunctionText = "var innerKernel = function(a){\r\n";
+			var index = 0;
+			for(var i in variablesRunsSet[0]){
+				innerKernelFunctionText += "var " + i + " = a[this.thread.x]["+index+"];\r\n";
+				index++;
+			}
+			var evaluator = String(gene).replace(/(sin|asin|cos|acos|tan|atan|sqrt|pow|log)/g,"Math.$1");
+			innerKernelFunctionText += "\
+				var testY = "+evaluator+";\r\n\
+				var temp = Math.pow(testY-y,2);\r\n\
+				return temp;\r\n\
+			}";
+			eval(innerKernelFunctionText);
+			//console.log(innerKernel);
+			const fitnessVector = gpu.createKernel(innerKernel)
+			  .setOutput([kernelVariablesRunsSet.length]);
+			  //.setOutputToTexture(true);
+			var result = fitnessVector(kernelVariablesRunsSet);
+			var retest = false;
+			if(result.indexOf(0) !== -1){
+				retest = true;
+			}
+			var total = result.reduce(function(a,b){return a+b;});
+			var sqrt = Math.sqrt(total);
+			
+			
+			if(!retest){
+			  return sqrt;
+			}
+		}
+		
 		try {
 			var mathObj = math.parse(gene);
+			var totalDifference = 0;
 			for(variablesRunIndex in variablesRunsSet){
 				var variablesRun = variablesRunsSet[variablesRunIndex];
 				var realY = variablesRun.y;
 			    var temp = mathObj.eval(variablesRun);
 			    totalDifference = math.eval("d+pow(t-y,2)",{d:totalDifference,t:temp,y:realY});
-			    
 			}
 		} catch (e) {
+			throw e;
 		    return false;
 		}
 		var ret = math.eval("sqrt(d)",{d:totalDifference});
@@ -179,8 +246,8 @@ var regresion = function(properties){
 	}
 	var validator = function(geneObject){
 		var code = geneObject.gene;
-
-		if(code == null || code.length>25 || code == 'NaNi'){
+		//var simpleCode = code.replace(/([0-9]\.[0-9]{2})[0-9]*/g,"$1");
+		if(code == null || String(code).replace(/([0-9]\.[0-9]{2})[0-9]*/g,"$1").length>25 || code == 'NaNi'){
 			return false;
 		}
 			/*
@@ -190,6 +257,11 @@ var regresion = function(properties){
 				    var temp = mathObj.eval(variablesRun);
 				}
 			*/
+			
+			var fitnessValue = fitnessFunction(code);
+			if(isNaN(fitnessValue)||fitnessValue == null|| fitnessValue == 'NaNi' || fitnessValue == 'Infinity' || fitnessValue === false){
+				return false;
+			}
 			try{
 				/*var totalNodes = 0;
 				if(geneObject.totalNodes !== undefined){
@@ -220,7 +292,7 @@ var regresion = function(properties){
 				'sqrt(n1^2) -> n1'
 				]);
 				//code = math.rationalize(math.simplify(code, simplifyExtraRules)).toString();
-				code = math.simplify(code, simplifyExtraRules, {exactFractions: false}).toString();
+				//code = math.simplify(code, simplifyExtraRules, {exactFractions: false}).toString();
 				/*try{
 					code = math.rationalize(code).toString();
 				}catch(err){
@@ -232,15 +304,11 @@ var regresion = function(properties){
 			}catch(err){
 				return false;
 			}
-			var fitnessValue = fitnessFunction(code);
-			if(isNaN(fitnessValue)||fitnessValue == null|| fitnessValue == 'NaNi' || fitnessValue == 'Infinity' || fitnessValue === false){
-				return false;
-			}
 			
 			return {generation: geneObject.generation,gene:code,fitness:fitnessValue};
 	};
 	var equals = function(gene1, gene2){
-		if(gene1.fitness == gene2.fitness){
+		if(gene1.fitness == gene2.fitness && (math.parse(gene1.gene).equals(gene2.gene) || difference(gene1.gene,gene2.gene) == 0)){
 			if(gene2.gene.length<gene1.gene.length){
 				gene1 = gene2;
 			}
@@ -248,8 +316,8 @@ var regresion = function(properties){
 		}else{
 			return false;
 		}
-		var equal = math.parse(gene1).equals(gene2);
-		return equal;
+		//var equal = math.parse(gene1).equals(gene2);
+		//return equal;
 	};
 	var difference = function(gene1, gene2){
 		var totalDifference = 0;
@@ -267,15 +335,30 @@ var regresion = function(properties){
 		} catch (e) {
 		    return false;
 		}
-		return math.eval("sqrt(t)",{t:totalDifference});
-	}
-	var crossover = function(gene1, gene2){
-		try{
+		var ret = math.eval("sqrt(d)",{d:totalDifference});
+		if(ret.im !== undefined){
+			if(ret.im == 0){
+				return ret.re;
+			}else{
+				return false;
+			}
 			
-			/*if(math.random()<0.1){
-				var gene2 = randomize();
+		}
+		return ret;
+		//return math.eval("sqrt(t)",{t:totalDifference});
+	}
+	var crossover = function(gene1In, gene2In){
+		try{
+			var gene1;
+			var gene2;
+			if(math.random()<0.1){
+				gene1 = crossover(gene1In, gene2In);
+				gene2 = crossover(gene1In, gene2In);				
 				//pruneTwoNode = math.parse(mutationString);
-			}*/
+			}else{
+				gene1 = gene1In;
+				gene2 = gene2In;
+			}
 
 			var gene1Nodes = [];
 			var gene2Nodes = [];
@@ -321,7 +404,7 @@ var regresion = function(properties){
 			crossedString = crossedObject.toString();
 			var mutationness = math.eval("1/(log(x+1)+1)",{x:difference(gene1, gene2)} )*0.4+0.1;
 			//console.log(mutationness);
-			if(math.random()<mutationness){
+			if(math.random()<mutationness || math.parse(gene1).equals(crossedString) || math.parse(gene2).equals(crossedString)){
 				var mutationString = randomize();
 				return crossover(crossedString, mutationString);
 			}

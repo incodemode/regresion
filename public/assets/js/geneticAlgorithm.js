@@ -39,7 +39,7 @@ function geneticAlgorithm(properties){
 		var oneThird;
 		var working = false;
 		var currentPopulationCount = populationCount;
-
+		var finishCriteriaFoundCallbackCalled = false;
 			function iterable(){
 				
 				switch(status){
@@ -47,7 +47,10 @@ function geneticAlgorithm(properties){
 						var possibleGene = randomize();
 						tryPushGene(newGenes, {gene:possibleGene,generation:currentGeneration});	
 						if(finishCriteriaTest(newGenes, currentGeneration)){
-							finishCriteriaFoundCallback(newGenes[0], currentGeneration);
+							if(!finishCriteriaFoundCallbackCalled){
+								finishCriteriaFoundCallback(newGenes[0], currentGeneration);
+								finishCriteriaFoundCallbackCalled = true;
+							}
 							return;
 						}
 						if(newGenes.length>=currentPopulationCount){
@@ -56,7 +59,10 @@ function geneticAlgorithm(properties){
 						break;
 					case "fillingGenerations":
 						if(currentGeneration>generationsCount){
-							finishCriteriaFoundCallback(newGenes[0], currentGeneration);
+							if(!finishCriteriaFoundCallbackCalled){
+								finishCriteriaFoundCallback(newGenes[0], currentGeneration);
+								finishCriteriaFoundCallbackCalled = true;
+							}
 							return;
 							
 						}else if(newGenes.length >= currentPopulationCount){
@@ -65,7 +71,10 @@ function geneticAlgorithm(properties){
 							genes = JSON.parse(JSON.stringify(newGenes));
 							newGenes.splice(oneThird,currentPopulationCount-oneThird);
 							if(finishCriteriaTest(genes, currentGeneration)){
-								finishCriteriaFoundCallback(newGenes[0], currentGeneration);
+								if(!finishCriteriaFoundCallbackCalled){
+									finishCriteriaFoundCallback(newGenes[0], currentGeneration);
+									finishCriteriaFoundCallbackCalled = true;
+								}
 								return;
 							}
 							
@@ -85,7 +94,10 @@ function geneticAlgorithm(properties){
 							tryPushGene(newGenes, {gene:gene3,generation:currentGeneration});
 							
 							if(finishCriteriaTest(newGenes, currentGeneration)){
-								finishCriteriaFoundCallback(newGenes[0], currentGeneration);
+								if(!finishCriteriaFoundCallbackCalled){
+									finishCriteriaFoundCallback(newGenes[0], currentGeneration);
+									finishCriteriaFoundCallbackCalled = true;
+								}
 								return;
 							}
 						}
@@ -93,12 +105,19 @@ function geneticAlgorithm(properties){
 
 				}
 				setTimeout(iterable,1);
+
 			
 			
 		}
 		newGenerationStartedCallback(1, null);
 		setTimeout(iterable,1);
-
+		setTimeout(iterable,1);
+		setTimeout(iterable,1);
+		setTimeout(iterable,1);
+		setTimeout(iterable,1);
+		setTimeout(iterable,1);
+		setTimeout(iterable,1);
+		setTimeout(iterable,1);
 				
 	
 	}
