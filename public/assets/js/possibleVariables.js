@@ -57,7 +57,7 @@
 		},
 		{
 			name: 'y=(x<sub>0</sub><sup>2</sup>+x<sub>1</sub><sup>2</sup>)<sup>0.5</sup>',
-			description: 'circulo',
+			description: 'Pitagoras',
 			variables: sqrtVariables/*[
 				[1,1,2,2,4,3,5,8,6,10],
 				[1,2,1,2,3,4,5,6,8,10],
@@ -84,7 +84,7 @@
 	
 	];
 
-	function transformToRunsSet(variables){
+	transformToRunsSet = function(variables){
 		runsSet = {};
 		for(var i = 0; i < variables[0].length;i++){
 			variableRunSet = {};

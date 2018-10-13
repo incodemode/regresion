@@ -3,8 +3,9 @@
 		<title> Funciones de Regresión por Medio de Algoritmos Genéticos</title>
 		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 		<meta charset="UTF-8">
-		<script src="assets/js/gpu.js"></script>
-  		<script src="assets/js/gpu-core.js"></script>
+		<script src="assets/js/turbo.js"></script>
+		<!--script src="assets/js/gpu.js"></script>
+  		<script src="assets/js/gpu-core.js"></script-->
 		<script src="assets/js/jquery-3.3.1.min.js"></script>
 		<script src="assets/js/prototype.clean.js"></script>
 		<script src="assets/js/array.unique.js"></script>
@@ -36,6 +37,7 @@
 					var $tr = $("<tr>");
 					$tr.append($("<td>").html(currentTestNumberForExample));
 					$tr.append($("<td>").html(possibleVariables[currentExample].name));
+
 					$tr.append($("<td>").text(geneObject.gene));
 					$tr.append($("<td>").text(geneObject.fitness));
 					$tr.append($("<td>").text(currentGeneration));
@@ -56,7 +58,7 @@
 					var variablesRunsSet = transformToRunsSet(possibleVariables[currentExample].variables);
 					logit("variablesRunsSet",variablesRunsSet);
 					var r = regresion({
-						populationCount: 100,
+						initialPopulationCount: 100,
 						generationsCount: 10000,
 						variablesRunsSet:variablesRunsSet,
 						newGenerationStartedCallback:function(generation){logit('newGenerationStarted: ', generation);

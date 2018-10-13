@@ -16,8 +16,9 @@
 	<meta name="keywords" content="Analisis de Regresion, Funciones de regresion, algoritmos genéticos, inteligencia artificial, analisis de datos, algoritmos evolutivos"/>
 	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 	<meta charset="UTF-8">
-	<script src="assets/js/gpu.js"></script>
-  	<script src="assets/js/gpu-core.js"></script>
+	<script src="assets/js/turbo.js"></script>
+	<!--script src="assets/js/gpu.js"></script-->
+  	<!--script src="assets/js/gpu-core.js"></script-->
 	<script src="assets/js/jquery-3.3.1.min.js"></script>
 	<script src="assets/js/prototype.clean.js"></script>
 	<script src="assets/js/array.unique.js"></script>
@@ -104,118 +105,124 @@
 
 				//obtain average of previous generation
 
+				$('#accordion').queue("update", function(next){
+					var newLastSumFitness = 0;
 					
-				var newLastSumFitness = 0;
-				
-				//genesUnderScope = JSON.parse(JSON.stringify(genes)).splice(5,genes.length);
-				if(previousGenes){
-					for(var i = 0;i<5;i++){
-						newLastSumFitness = newLastSumFitness + previousGenes[i].fitness;
-					}
-					//if(lastSumFitness != newLastSumFitness){
-						lastSumFitness = newLastSumFitness;
-						var newAverageFitness = newLastSumFitness/5;
-						var newAveragePoint = {x:generationNumber-1,y:newAverageFitness};
-						config.data.datasets[1].data.push(newAveragePoint);
-						if(config.data.datasets[1].data.length >=3 
-							&& config.data.datasets[1].data[config.data.datasets[1].data.length-2].y == newAverageFitness
-							&& config.data.datasets[1].data[config.data.datasets[1].data.length-3].y == newAverageFitness){
-								config.data.datasets[1].data.splice(config.data.datasets[1].data.length-2,1);
+					//genesUnderScope = JSON.parse(JSON.stringify(genes)).splice(5,genes.length);
+					if(previousGenes){
+						for(var i = 0;i<5;i++){
+							newLastSumFitness = newLastSumFitness + previousGenes[i].fitness;
 						}
-					//}
+						//if(lastSumFitness != newLastSumFitness){
+							lastSumFitness = newLastSumFitness;
+							var newAverageFitness = newLastSumFitness/5;
+							var newAveragePoint = {x:generationNumber-1,y:newAverageFitness};
+							config.data.datasets[1].data.push(newAveragePoint);
+							if(config.data.datasets[1].data.length >=3 
+								&& config.data.datasets[1].data[config.data.datasets[1].data.length-2].y == newAverageFitness
+								&& config.data.datasets[1].data[config.data.datasets[1].data.length-3].y == newAverageFitness){
+									config.data.datasets[1].data.splice(config.data.datasets[1].data.length-2,1);
+							}
+						//}
 
-				}
-
-				generationCount = generationNumber;
-				
-				var $empty = $('#emptyCard');
-				var $newCard = $empty.clone();
-				
-				var cardId = 'generation_'+generationNumber;
-				var headerId ='generation_header_'+generationNumber;
-				var collapseId = 'generation_collapse_'+generationNumber;
-				$newCard.attr('id', cardId);
-				$newCard.attr('data-generation', generationNumber);
-				$newCard.find('[data-title]').attr('data-target', '#'+collapseId).attr('aria-controls', collapseId)
-					.html('<span class="fas fa-chevron-circle-down"> </span>&nbsp;Generación ' + generationNumber);
-				$newCard.find('[data-heading]').attr('id', headerId);
-				$newCard.find('[data-container]').attr('aria-labelledby',headerId).attr('id', collapseId);
-				$newCard.find('[data-body]').html("Vacio");
-				$empty.after($newCard);
-				$newCard.show({complete:function(){
-					
-					
-					//$("#"+collapseId).collapse('show');
-				}});
-				/*if(config.data.datasets[0].data.length>=1 && config.data.datasets[0].data[config.data.datasets[0].data.length-1].x == generationNumber){
-					config.data.datasets[0].data[config.data.datasets[0].data.length-1][config.data.labels.length-1] = generationNumber;
-				}else{
-
-					config.data.labels.push(generationNumber);
-				}*/
-				$("#chartHolder").show();
-				window.myLine.update();
-				//config.data.datasets[0].data[config.data.datasets[0].data.length] = minFitness;
-				//$(".collapse.show").not("#"+collapseId).collapse('hide');
-
-				$("#accordion .card").each(function(index){
-					if(index > 100){
-						$(this).remove();
 					}
-				});
+
+					generationCount = generationNumber;
+					
+					var $empty = $('#emptyCard');
+					var $newCard = $empty.clone();
+					
+					var cardId = 'generation_'+generationNumber;
+					var headerId ='generation_header_'+generationNumber;
+					var collapseId = 'generation_collapse_'+generationNumber;
+					$newCard.attr('id', cardId);
+					$newCard.attr('data-generation', generationNumber);
+					$newCard.find('[data-title]').attr('data-target', '#'+collapseId).attr('aria-controls', collapseId)
+						.html('<span class="fas fa-chevron-circle-down"> </span>&nbsp;Generación ' + generationNumber);
+					$newCard.find('[data-heading]').attr('id', headerId);
+					$newCard.find('[data-container]').attr('aria-labelledby',headerId).attr('id', collapseId);
+					$newCard.find('[data-body]').html("Vacio");
+					$empty.after($newCard);
+					$newCard.show({complete:function(){
+						
+						
+						//$("#"+collapseId).collapse('show');
+					}});
+					/*if(config.data.datasets[0].data.length>=1 && config.data.datasets[0].data[config.data.datasets[0].data.length-1].x == generationNumber){
+						config.data.datasets[0].data[config.data.datasets[0].data.length-1][config.data.labels.length-1] = generationNumber;
+					}else{
+
+						config.data.labels.push(generationNumber);
+					}*/
+					$("#chartHolder").show();
+					window.myLine.update();
+					//config.data.datasets[0].data[config.data.datasets[0].data.length] = minFitness;
+					//$(".collapse.show").not("#"+collapseId).collapse('hide');
+
+					$("#accordion .card").each(function(index){
+						if(index > 100){
+							$(this).remove();
+						}
+					});
+					setTimeout(function(){$('#accordion').dequeue('update');},10);
+				}).dequeue("update");
+				//if($('#accordion').queue('update').length!=0){}
 			}
-			newGeneFoundCallback = function(geneObject){
-				if(minFitness == null || geneObject.fitness < minFitness){
-					minFitness = geneObject.fitness;
-				}
-				var $currentContainer = $("#accordion .card:nth-child(2)").find("[data-container]");
-				var $table = $currentContainer.find('table');
-				if($table.length==0){
-					$table = $('#emptyCard table').clone();
-					$currentContainer.empty().append($table);
-					$table.show(400);
-				}
-				var $row = $table.find("tbody tr").first().clone();
-				$row.find("[data-gene]").text(geneObject.gene);
-				$row.find("[data-generation]").text(geneObject.generation);
-				$row.find("[data-fitness]").text(geneObject.fitness/*.toFixed(4).replace(/[.,]0*$/, "")*/);
-				
+			newGeneFoundCallback = function(geneObject, currentGeneration){
+				$('#accordion').queue("update", function(){
+					if(minFitness == null || geneObject.fitness < minFitness){
+						minFitness = geneObject.fitness;
+					}
+					var $currentContainer = $("#generation_collapse_"+currentGeneration);
+					var $table = $currentContainer.find('table');
+					if($table.length==0){
+						$table = $('#emptyCard table').clone();
+						$currentContainer.empty().append($table);
+						$table.show(400);
+					}
+					var $row = $table.find("tbody tr").first().clone();
+					$row.find("[data-gene]").text(geneObject.gene);
+					$row.find("[data-generation]").text(geneObject.generation);
+					$row.find("[data-fitness]").text(Number(geneObject.fitness).toLocaleString()).attr("data-fitness", geneObject.fitness);
+					
 
-				$table.find("tbody").find("tr:nth-child("+geneObject.number+")").after($row);
-				
-				var $rows = $table.find("tbody tr");
-				$rows.each(function(i){
-					$(this).find('[data-number]').html(i);
-				});
-				
-				$row.show(400);
-				if($rows.length>150){
-					$rows.last().remove();
-				}
-				
-				if($rows)
-				var lastData = config.data.datasets[0].data[config.data.datasets[0].data.length-1];
-				if(lastData !== undefined){
-					if(lastData.x == generationCount){
-						if(lastData.y != minFitness){
-							lastData.y = minFitness;
-							window.myLine.update();		
+					$table.find("tbody").find("tr:nth-child("+geneObject.number+")").after($row);
+					
+					var $rows = $table.find("tbody tr");
+					$rows.each(function(i){
+						$(this).find('[data-number]').html(i);
+					});
+					
+					$row.show(400);
+					if($rows.length>150){
+						$rows.last().remove();
+					}
+					
+					if($rows)
+					var lastData = config.data.datasets[0].data[config.data.datasets[0].data.length-1];
+					if(lastData !== undefined){
+						if(lastData.x == generationCount){
+							if(lastData.y != minFitness){
+								lastData.y = minFitness;
+								window.myLine.update();		
+							}
+						}else{//} && lastData.y != minFitness){
+							config.data.datasets[0].data.push({x:generationCount,y:minFitness});
+							if(config.data.datasets[0].data.length >=4 
+								&& config.data.datasets[0].data[config.data.datasets[0].data.length-3].y 
+								== config.data.datasets[0].data[config.data.datasets[0].data.length-2].y
+								&& config.data.datasets[0].data[config.data.datasets[0].data.length-4].y 
+								== config.data.datasets[0].data[config.data.datasets[0].data.length-3].y){
+									config.data.datasets[0].data.splice(config.data.datasets[0].data.length-3,1);
+							}
+							window.myLine.update();
 						}
-					}else{//} && lastData.y != minFitness){
+					}else{
 						config.data.datasets[0].data.push({x:generationCount,y:minFitness});
-						if(config.data.datasets[0].data.length >=4 
-							&& config.data.datasets[0].data[config.data.datasets[0].data.length-3].y 
-							== config.data.datasets[0].data[config.data.datasets[0].data.length-2].y
-							&& config.data.datasets[0].data[config.data.datasets[0].data.length-4].y 
-							== config.data.datasets[0].data[config.data.datasets[0].data.length-3].y){
-								config.data.datasets[0].data.splice(config.data.datasets[0].data.length-3,1);
-						}
 						window.myLine.update();
 					}
-				}else{
-					config.data.datasets[0].data.push({x:generationCount,y:minFitness});
-					window.myLine.update();
-				}
+					setTimeout(function(){$('#accordion').dequeue('update');},10);
+				}).dequeue( "update" );
 				
 			}
 
@@ -446,7 +453,7 @@
 				}
 				
 				var r = regresion({
-					populationCount: 100,
+					initialPopulationCount: 100,
 					generationsCount: 10000,
 					variablesRunsSet:variablesRunsSet,
 					newGenerationStartedCallback:newGenerationStartedCallback,
@@ -473,7 +480,7 @@
 
 				var geneText = $(this).closest('tr').find('[data-gene]').text();
 				var numberText = $(this).closest('tr').find('[data-number]').text();
-				var fitnessText = $(this).closest('tr').find('[data-fitness]').text();
+				var fitnessText = $(this).closest('tr').find('[data-fitness]').attr('data-fitness');
 				var generationText = $(this).closest('tr').find('[data-generation]').text();
 
 				for(var i in independentVariables){
@@ -666,7 +673,7 @@
 
 				$functionVisor.show(400, function(){
 
-
+					
 					var latex = math.parse(geneText)
 						.toTex({parenthesis: 'keep', implicit: 'hide'})
 						.replace(/x([0-9])*/g,"x_{$1}");
@@ -676,7 +683,7 @@
 
 					$functionVisor.find("#functionSummary").find("[data-number]").text(numberText);
 					$functionVisor.find("[data-generation]").text(generationText);
-					$functionVisor.find("[data-fitness]").text(fitnessText);
+					$functionVisor.find("[data-fitness]").text(Number(fitnessText).toLocaleString());
 					$functionVisor.find("[data-lt]").text("$y=" + latex+ "$");
 					$functionVisor.find("[data-js]").text("y="+geneText);
 					var waLink = $('<a>')
