@@ -1,3 +1,7 @@
+var isNode=new Function("try {return this===global;}catch(e){return false;}");
+if (isNode()) {
+	iyem = require('iyem');
+}
 genesUsed = [];
 tryPushGene = null;
 geneticAlgorithm = function(properties){
@@ -89,7 +93,7 @@ geneticAlgorithm = function(properties){
 								finishCriteriaFoundCallback(newGenes[0], currentGeneration);
 								finishCriteriaFoundCallbackCalled = true;
 							}
-							return;
+							return 'finish';
 						}
 						if(newGenes.length>=currentPopulationCount){
 							possibleGenes = [];
@@ -104,7 +108,7 @@ geneticAlgorithm = function(properties){
 								finishCriteriaFoundCallback(newGenes[0], currentGeneration);
 								finishCriteriaFoundCallbackCalled = true;
 							}
-							return;
+							return 'finish';
 							
 						}else if(newGenes.length >= currentPopulationCount){
 
@@ -125,7 +129,7 @@ geneticAlgorithm = function(properties){
 									finishCriteriaFoundCallback(newGenes[0], currentGeneration);
 									finishCriteriaFoundCallbackCalled = true;
 								}
-								return;
+								return 'finish';
 							}
 							possibleGenes = [];
 							filled = false;
@@ -184,19 +188,34 @@ geneticAlgorithm = function(properties){
 									finishCriteriaFoundCallback(newGenes[0], currentGeneration);
 									finishCriteriaFoundCallbackCalled = true;
 								}
-								return;
+								return 'finish';
 							}
 						}
 						break;
 
 				}
-				setTimeout(iterable,0);
+				if(isNode()){
+					
+					
+					
+				}else{
+					setTimeout(iterable,1);
+				}
 
 			
 			
 		}
 		newGenerationStartedCallback(1, null);
-		setTimeout(iterable,0);
+		if(isNode()){
+			
+			 while(iterable() != 'finish'){}
+			
+			
+		}else{
+			setTimeout(iterable,1);
+		}
+
+	
 		
 				
 	

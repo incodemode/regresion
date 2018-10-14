@@ -71,9 +71,9 @@ regresion = function(properties){
 			lastFitness = newGenes[0].fitness;
 			lastGenerationFitnessChange = currentGeneration;
 		}
-		if(currentGeneration - lastGenerationFitnessChange > 99){
+		if(currentGeneration - lastGenerationFitnessChange > 299){
 			
-			return true;;
+			return true;
 		}
 		return false
 	}
@@ -91,13 +91,13 @@ regresion = function(properties){
 			var newLastSumFitness = 0;
 			genesFromFinishCriteria = genes;
 			//genesUnderScope = JSON.parse(JSON.stringify(genes)).splice(5,genes.length);
-			for(var i = 0;i<5;i++){
+			for(var i = 0;i<10;i++){
 				newLastSumFitness = newLastSumFitness + genes[i].fitness;
 			}
 			if(lastSumFitness != newLastSumFitness){
 				lastSumFitness = newLastSumFitness;
 				lastGenerationFitnessSumChanged = currentGeneration;
-			}else if(currentGeneration-lastGenerationFitnessSumChanged > 99){
+			}else if(currentGeneration-lastGenerationFitnessSumChanged > 299){
 				return true;
 			}
 			return false;
