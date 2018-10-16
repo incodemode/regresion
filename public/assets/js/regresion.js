@@ -30,20 +30,22 @@ simplify = function(gene){
 		return gene;
 	}
 }
-regresion = function(properties){
-	var variablesRunsSet = properties.variablesRunsSet;
-	var newGenerationStartedCallback = properties.newGenerationStartedCallback;
-	var newGeneFoundCallback = properties.newGeneFoundCallback;
-	var finishCriteriaFoundCallback = properties.finishCriteriaFoundCallback;
-	var initialPopulationCount = properties.initialPopulationCount;
-	var generationsCount = properties.generationsCount;
+regresion = function(){
 	
-	var variableNames = [];
+	var variablesRunsSet = null;
+	var newGenerationStartedCallback = null;
+	var newGeneFoundCallback = null;
+	var finishCriteriaFoundCallback = null;
+	var initialPopulationCount = null;
+	var generationsCount = null;
+	var variableNames = null;
 	
 	var lastGenesUsed = null;
 	var totalReverseFitness = null;
 	var elitistParentSelector = function(genes){
-		
+		if(genes.length<2){
+			return null;
+		}
 		var maxFitness = genes[genes.length-1].fitness;
 		
 		if(lastGenesUsed != genes){
@@ -183,8 +185,8 @@ regresion = function(properties){
 			case "pi":
 			case "e":
 
-				var genes = math.round(math.eval(operator),2);
-				//var genes = operator;
+				//var genes = math.round(math.eval(operator),2);
+				var genes = operator;
 				break;
 			case "var":
 				var variableIndex = Math.floor(Math.random() * variableNames.length); // from 0 to latest character
@@ -433,7 +435,7 @@ regresion = function(properties){
 		}
 	}
 	compiled = function(genome){
-		if(genome.compiled==undefined){
+		if(genome.compiled==undefined || typeof genome.compiled.eval != 'function'){
 			genome.compiled = math.compile(genome.gene);
 		}
 		return genome.compiled;
@@ -473,7 +475,7 @@ regresion = function(properties){
 		return ret;
 	}
 	var parsed = function(geneObject){
-		if(geneObject.parsed !== undefined){
+		if(geneObject.parsed !== undefined && typeof geneObject.parsed.eval == "function"){
 			return geneObject.parsed;
 		}
 		try{
@@ -586,7 +588,7 @@ regresion = function(properties){
 	};
 	var equals = function(gene1, gene2){
 		try{
-			if(gene1.fitness == gene2.fitness && (math.parse(gene1.gene).equals(gene2.gene) || difference(gene1.gene,gene2.gene) == 0)){
+			if(gene1.fitness == gene2.fitness && (gene1.gene == gene2.gene || parsed(gene1).equals(gene2.gene) || !isDifferent(gene1,gene2))){
 				//if(gene1.fitness == gene2.fitness){
 			//if(gene1.fitness == gene2.fitness && math.parse(gene1.gene).equals(gene2.gene)){
 				/*if(gene2.gene.length<gene1.gene.length){
@@ -602,6 +604,25 @@ regresion = function(properties){
 		//var equal = math.parse(gene1).equals(gene2);
 		//return equal;
 	};
+	var isDifferent = function(gene1, gene2){
+		var totalDifference = 0;
+		try {
+			var mathObj1 = compiled(gene1);
+			var mathObj2 = compiled(gene2);
+			for(variablesRunIndex in variablesRunsSet){
+				var variablesRun = variablesRunsSet[variablesRunIndex];
+				
+			    var temp1 = mathObj1.eval(variablesRun);
+			    var temp2 = mathObj2.eval(variablesRun);
+			    if(temp1 != temp2){
+			    	return true;
+			    }
+			}
+		} catch (e) {
+			throw e;
+		}
+		return false;
+	}
 	var difference = function(gene1, gene2){
 		var totalDifference = 0;
 		try {
@@ -638,20 +659,25 @@ regresion = function(properties){
 		}*/
 
 		try{
-			var gene1;
-			var gene2;
+			var gene1 = null;
+			var gene2 = null;
 			if(limit > 0 && math.random()<0.1){
 				gene1 = crossover(gene1In, gene2In, limit-1);
-				gene2 = crossover(gene1In, gene2In, limit-1);				
-				//pruneTwoNode = math.parse(mutationString);
-			}else{
+				gene2 = crossover(gene1In, gene2In, limit-1);	
+				
+			}
+			if(gene1 == null){
 				gene1 = gene1In;
-				gene2 = gene2In;
+				
 				if(limit == 2 && gene1.s !== true){
 					gene1.parsed = math.simplify(gene1.gene, simplifyExtraRules, {exactFractions: true});
 					gene1.gene = gene1.parsed.toString();
 					gene1.s = true;
 				}
+				
+			}
+			if(gene2 == null){
+				gene2 = gene2In;
 				if(limit == 2 && gene2.s !== true){
 					gene2.parsed = math.simplify(gene2.gene, simplifyExtraRules, {exactFractions: true});
 					gene2.gene = gene2.parsed.toString();
@@ -723,7 +749,10 @@ regresion = function(properties){
 				
 				//if(math.random()<0.1){
 					var mutationString = randomize();
-					return crossover({gene:crossedString}, {gene:mutationString}, limit -1);
+					var randomGenome = crossover({gene:crossedString}, {gene:mutationString}, limit -1);
+					if(randomGenome !== null){
+						return randomGenome;
+					}
 				}
 			}
 			/*if(math.random()<0.1){
@@ -737,19 +766,13 @@ regresion = function(properties){
 		return {gene:crossedString};
 	}
 	var getPopulationCount = function(initialPopulation, genes, currentGeneration){
-		//return initialPopulation;
+		return initialPopulation;
 		var currentPopulationCount = initialPopulation + Math.floor(Math.log(currentGeneration+1)*25);
 		return currentPopulationCount;
 	}
-	this.execute = function(){
-		
-		variableNames = [];
-		for(variableName in variablesRunsSet[0]){
-			if(variableName != "y"){
-				variableNames.push(variableName);
-			}
-		}
-		var ga = geneticAlgorithm({
+	var getProperties = function(){
+		//console.log("regresion.getProperties",newGenerationStartedCallback);
+		var properties = {
 			batchValidator: batchValidator,
 			batchable: batchable,
 			prepareForBatch: prepareForBatch,
@@ -766,8 +789,38 @@ regresion = function(properties){
 			newGenerationStartedCallback:newGenerationStartedCallback,
 			newGeneFoundCallback:newGeneFoundCallback,
 			finishCriteriaFoundCallback:finishCriteriaFoundCallback
-		});
+		};
+		//console.log("newGenerationStartedCallback",newGenerationStartedCallback);
+		return properties;
+	}
+
+	var execute = function(){
+		var ga = geneticAlgorithm();
+		ga.setProperties(getProperties());
 		ga.execute();
 	};
-	return this;
+	var setProperties = function(properties){
+		//console.log("regresion.setProperties 1", properties.newGenerationStartedCallback)
+		variablesRunsSet = properties.variablesRunsSet;
+		newGenerationStartedCallback = properties.newGenerationStartedCallback;
+		//console.log("regresion.setProperties 2", newGenerationStartedCallback)
+		newGeneFoundCallback = properties.newGeneFoundCallback;
+		finishCriteriaFoundCallback = properties.finishCriteriaFoundCallback;
+		initialPopulationCount = properties.initialPopulationCount;
+		generationsCount = properties.generationsCount;
+		variableNames = [];
+		for(variableName in variablesRunsSet[0]){
+			if(variableName != "y"){
+				variableNames.push(variableName);
+			}
+		}
+		//console.log(newGenerationStartedCallback);
+		
+	}
+	return {
+		setProperties,
+		execute,
+		getProperties
+	};
+	
 }

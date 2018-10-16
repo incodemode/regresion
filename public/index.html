@@ -18,7 +18,7 @@
 	<meta charset="UTF-8">
 	<script src="assets/js/turbo.js"></script>
 	<!--script src="assets/js/gpu.js"></script-->
-  	<!--script src="assets/js/gpu-core.js"></script-->
+  	<script src="assets/js/incodemode.array.insertOrdered.js"></script>
 	<script src="assets/js/jquery-3.3.1.min.js"></script>
 	<script src="assets/js/prototype.clean.js"></script>
 	<script src="assets/js/array.unique.js"></script>
@@ -109,7 +109,7 @@
 					var newLastSumFitness = 0;
 					
 					//genesUnderScope = JSON.parse(JSON.stringify(genes)).splice(5,genes.length);
-					if(previousGenes){
+					if(previousGenes.length>=5){
 						for(var i = 0;i<5;i++){
 							newLastSumFitness = newLastSumFitness + previousGenes[i].fitness;
 						}
@@ -452,7 +452,8 @@
 					independentLabels[i] = unique(independentLabels[i]);
 				}
 				
-				var r = regresion({
+				var r = regresion();
+				r.setProperties({
 					initialPopulationCount: 100,
 					generationsCount: 10000,
 					variablesRunsSet:variablesRunsSet,
