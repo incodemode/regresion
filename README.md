@@ -1,4 +1,7 @@
 # regresion
+
+GNU GPL (General Public License) means you can use it, copy it as long as you keep the license, you can definitelly saas it, but please remember the main goal is for this to be free..
+ 
 El programa está distribuido en tres capas principales:
 
 - El Algoritmo Genético (public/assets/js/geneticAlgorithm.js): Se encarga de hacer los ciclos necesarios sin que se trabe el explorador y hacer los callbacks cuando se inicia una nueva generación o un gen.
