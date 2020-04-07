@@ -1,7 +1,14 @@
 # regresion
 
-GNU GPL (General Public License) means you can use it, copy it as long as you keep the license, you can definitelly saas it, but please remember the main goal is for this to be free..
- 
+GNU GPL V3 (General Public License) means you can use it, copy it as long as you keep the license, you can definitelly saas it, but please remember the main goal is for this to be free. Check GNU_GPL.md for the full license
+
+Install/use:
+Open public/index.html in any navigator, preferably chrome, you may put it in a web server, it works like any other web page.
+
+Future Plans:
+Create an ml backend with java to improve the speed of the frontend.
+
+Now to the spanish part: (TODO: Translate/duplicate)
 El programa está distribuido en tres capas principales:
 
 - El Algoritmo Genético (public/assets/js/geneticAlgorithm.js): Se encarga de hacer los ciclos necesarios sin que se trabe el explorador y hacer los callbacks cuando se inicia una nueva generación o un gen.
