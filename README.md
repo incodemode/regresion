@@ -1,6 +1,6 @@
 # regresion
 
-GNU GPL V3 (General Public License) means you can use it, copy it as long as you keep the license, you can definitelly saas it, but please remember the main goal is for this to be free. Check GNU_GPL.md for the full license
+GNU GPL V3 (General Public License) means you can use it, copy it as long as you keep the license, you can definitelly saas it, but please remember the main goal is for this to be free. Check GNU_GPL_V3.md for the full license
 
 Install/use:
 Open public/index.html in any navigator, preferably chrome, you may put it in a web server, it works like any other web page.
